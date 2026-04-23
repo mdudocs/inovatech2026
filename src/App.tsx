@@ -17,6 +17,7 @@ import './App.css'
 import { applyTheme, resolveInitialTheme } from './theme'
 
 type RiskTone = 'critical' | 'high' | 'medium'
+type SignalTone = 'critical' | 'warning' | 'attention' | 'neutral'
 
 type Stat = {
   label: string
@@ -28,7 +29,7 @@ type Signal = {
   title: string
   description: string
   source: string
-  tone: 'critical' | 'warning' | 'attention' | 'neutral'
+  tone: SignalTone
 }
 
 type QuickAccessCard = {
@@ -72,12 +73,21 @@ type Stop = {
 
 type TerritoryMarker = {
   name: string
+  detail: string
   x: number
   y: number
   risk: RiskTone
   labelX: number
   labelY: number
   labelAnchor?: 'start' | 'middle' | 'end'
+}
+
+type MapTooltipPoint = {
+  name: string
+  detail: string
+  risk: RiskTone
+  x: number
+  y: number
 }
 
 type Evidence = {
@@ -321,6 +331,7 @@ const routeStops: Stop[] = [
 const territoryMarkers: TerritoryMarker[] = [
   {
     name: 'Pres. Figueiredo',
+    detail: 'Area complementar de observacao ambiental com sinal de atencao alta.',
     x: 238,
     y: 134,
     risk: 'high',
@@ -330,6 +341,7 @@ const territoryMarkers: TerritoryMarker[] = [
   },
   {
     name: '34 comunidades',
+    detail: 'Nucleo em seca extrema com necessidade de vigilancia territorial reforcada.',
     x: 206,
     y: 314,
     risk: 'critical',
@@ -387,14 +399,64 @@ const riskLabel: Record<RiskTone, string> = {
   medium: 'Moderado',
 }
 
+const signalToneMeta: Record<
+  SignalTone,
+  { label: string; action: string }
+> = {
+  critical: {
+    label: 'Alerta maximo',
+    action:
+      'Reforcar triagem imediata, orientar familias com maior consumo de peixe e priorizar busca ativa.',
+  },
+  warning: {
+    label: 'Alerta alto',
+    action:
+      'Aumentar vigilancia local, revisar acesso a agua segura e comunicar riscos nas comunidades proximas.',
+  },
+  attention: {
+    label: 'Atencao',
+    action:
+      'Manter coleta e monitoramento frequentes para evitar que o quadro avance sem resposta rapida.',
+  },
+  neutral: {
+    label: 'Em observacao',
+    action:
+      'Consolidar dados de campo e manter o territorio sob acompanhamento continuo.',
+  },
+}
+
+function getMapTooltipPosition(point: MapTooltipPoint) {
+  const width = 244
+  const height = 108
+  let x = point.x + 22
+  let y = point.y - height - 18
+
+  if (x + width > 1176) {
+    x = point.x - width - 22
+  }
+
+  if (y < 24) {
+    y = point.y + 24
+  }
+
+  return { x, y, width, height }
+}
+
 function App() {
   const [theme, setTheme] = useState(resolveInitialTheme)
+  const [activeMapPoint, setActiveMapPoint] = useState<MapTooltipPoint | null>(
+    null,
+  )
   const heroWatch = communities.slice(0, 3)
   const nextThemeLabel = theme === 'light' ? 'Modo escuro' : 'Modo claro'
 
   useEffect(() => {
     applyTheme(theme)
   }, [theme])
+
+  const activeTooltipPosition = activeMapPoint
+    ? getMapTooltipPosition(activeMapPoint)
+    : null
 
   return (
     <div className="page-shell">
@@ -552,18 +614,26 @@ function App() {
 
             <div className="signal-grid">
               {signals.map((signal) => (
-                <article
-                  key={signal.title}
-                  className={`signal-card signal-${signal.tone}`}
-                >
+                <article key={signal.title} className={`signal-card signal-${signal.tone}`}>
                   <div className="signal-head">
-                    <div className="signal-icon">
-                      <AlertTriangle size={18} />
+                    <div className="signal-alert-title">
+                      <div className="signal-icon">
+                        <AlertTriangle size={18} />
+                      </div>
+                      <div className="signal-copy">
+                        <span className={`signal-level signal-level-${signal.tone}`}>
+                          {signalToneMeta[signal.tone].label}
+                        </span>
+                        <h3>{signal.title}</h3>
+                      </div>
                     </div>
-                    <span>{signal.source}</span>
+                    <span className="signal-source">{signal.source}</span>
                   </div>
-                  <h3>{signal.title}</h3>
                   <p>{signal.description}</p>
+                  <div className="signal-footer">
+                    <span>Acao recomendada</span>
+                    <strong>{signalToneMeta[signal.tone].action}</strong>
+                  </div>
                 </article>
               ))}
             </div>
@@ -785,7 +855,17 @@ function App() {
                 />
 
                 {routeStops.map((stop) => (
-                  <g key={stop.name} className={`map-stop map-stop-${stop.risk}`}>
+                  <g
+                    key={stop.name}
+                    className={`map-stop map-stop-${stop.risk} map-stop-trigger`}
+                    onMouseEnter={() => setActiveMapPoint(stop)}
+                    onMouseLeave={() => setActiveMapPoint(null)}
+                    onFocus={() => setActiveMapPoint(stop)}
+                    onBlur={() => setActiveMapPoint(null)}
+                    tabIndex={0}
+                    role="button"
+                    aria-label={`${stop.name}: ${riskLabel[stop.risk]}`}
+                  >
                     <circle className="stop-halo" cx={stop.x} cy={stop.y} r="26" />
                     <circle className="stop-ring" cx={stop.x} cy={stop.y} r="16" />
                     <circle className="stop-core" cx={stop.x} cy={stop.y} r="8" />
@@ -811,7 +891,17 @@ function App() {
                 ))}
 
                 {territoryMarkers.map((marker) => (
-                  <g key={marker.name} className={`map-stop map-stop-${marker.risk}`}>
+                  <g
+                    key={marker.name}
+                    className={`map-stop map-stop-${marker.risk} map-stop-trigger`}
+                    onMouseEnter={() => setActiveMapPoint(marker)}
+                    onMouseLeave={() => setActiveMapPoint(null)}
+                    onFocus={() => setActiveMapPoint(marker)}
+                    onBlur={() => setActiveMapPoint(null)}
+                    tabIndex={0}
+                    role="button"
+                    aria-label={`${marker.name}: ${riskLabel[marker.risk]}`}
+                  >
                     <circle className="marker-ring" cx={marker.x} cy={marker.y} r="12" />
                     <circle className="marker-core" cx={marker.x} cy={marker.y} r="5" />
                     <text
@@ -824,6 +914,25 @@ function App() {
                     </text>
                   </g>
                 ))}
+
+                {activeMapPoint && activeTooltipPosition ? (
+                  <foreignObject
+                    x={activeTooltipPosition.x}
+                    y={activeTooltipPosition.y}
+                    width={activeTooltipPosition.width}
+                    height={activeTooltipPosition.height}
+                    className="map-tooltip-shell"
+                    aria-hidden="true"
+                  >
+                    <div className="map-tooltip">
+                      <span className={`map-tooltip-level map-tooltip-${activeMapPoint.risk}`}>
+                        Situacao {riskLabel[activeMapPoint.risk]}
+                      </span>
+                      <strong>{activeMapPoint.name}</strong>
+                      <p>{activeMapPoint.detail}</p>
+                    </div>
+                  </foreignObject>
+                ) : null}
 
                 <g className="map-scale" aria-hidden="true">
                   <line x1="76" y1="408" x2="316" y2="408" />
