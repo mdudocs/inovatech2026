@@ -1238,14 +1238,6 @@
   letter-spacing: 0.02em;
 }
 
-.stop-risk-text {
-  fill: var(--map-critical);
-  font-size: 0.78rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
 .marker-ring {
   fill: var(--map-stop-fill);
   stroke-width: 2.5;
@@ -1272,6 +1264,45 @@
   fill: var(--map-muted);
   font-size: 0.86rem;
   letter-spacing: 0.08em;
+}
+
+.map-legend-box {
+  fill: var(--map-legend-bg);
+  stroke: var(--map-legend-border);
+}
+
+.map-legend-title,
+.map-legend-label {
+  font-family: var(--mono);
+}
+
+.map-legend-title {
+  fill: var(--map-legend-title);
+  font-size: 0.74rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.map-legend-label {
+  fill: var(--map-legend-text);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+}
+
+.map-legend-dot-low {
+  fill: var(--map-low);
+}
+
+.map-legend-dot-medium {
+  fill: var(--map-medium);
+}
+
+.map-legend-dot-high {
+  fill: var(--map-high);
+}
+
+.map-legend-dot-critical {
+  fill: var(--map-critical);
 }
 
 .map-tooltip-shell {
