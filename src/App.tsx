@@ -52,8 +52,23 @@ type Community = {
 type Stop = {
   name: string
   detail: string
-  position: number
+  x: number
+  y: number
   risk: RiskTone
+  labelX: number
+  labelY: number
+  labelAnchor?: 'start' | 'middle' | 'end'
+  riskText?: string
+}
+
+type TerritoryMarker = {
+  name: string
+  x: number
+  y: number
+  risk: RiskTone
+  labelX: number
+  labelY: number
+  labelAnchor?: 'start' | 'middle' | 'end'
 }
 
 type Evidence = {
@@ -229,32 +244,68 @@ const routeStops: Stop[] = [
   {
     name: 'Manaus / Baixo Rio Negro',
     detail: 'Pressao de seca extrema e comunidades isoladas.',
-    position: 8,
+    x: 118,
+    y: 218,
     risk: 'critical',
+    labelX: 118,
+    labelY: 254,
   },
   {
     name: 'Novo Airao',
     detail: 'Entrada operacional para articulacao local.',
-    position: 28,
+    x: 305,
+    y: 242,
     risk: 'medium',
+    labelX: 305,
+    labelY: 276,
   },
   {
     name: 'Barcelos',
     detail: 'Trecho com leitura alimentar e historico de campanhas.',
-    position: 50,
+    x: 575,
+    y: 197,
     risk: 'high',
+    labelX: 575,
+    labelY: 228,
   },
   {
     name: 'Santa Isabel do Rio Negro',
     detail: 'Distancia longa e resposta assistencial mais lenta.',
-    position: 73,
+    x: 904,
+    y: 185,
     risk: 'high',
+    labelX: 904,
+    labelY: 214,
   },
   {
     name: 'Sao Gabriel da Cachoeira',
     detail: 'Maior concentracao de vulnerabilidade na rota prioritaria.',
-    position: 92,
+    x: 1110,
+    y: 160,
     risk: 'critical',
+    labelX: 1110,
+    labelY: 198,
+    riskText: 'Muito alto',
+  },
+]
+
+const territoryMarkers: TerritoryMarker[] = [
+  {
+    name: 'Pres. Figueiredo',
+    x: 244,
+    y: 136,
+    risk: 'high',
+    labelX: 294,
+    labelY: 130,
+    labelAnchor: 'start',
+  },
+  {
+    name: '34 comunidades',
+    x: 214,
+    y: 318,
+    risk: 'critical',
+    labelX: 214,
+    labelY: 342,
   },
 ]
 
@@ -596,43 +647,142 @@ function App() {
 
         <section className="section" id="territorio">
           <div className="section-intro">
-            <span className="section-kicker">Territorio priorizado</span>
-            <h2>O Rio Negro aparece como corredor vivo, nao como detalhe visual.</h2>
+            <span className="section-kicker">Mapa do rio</span>
+            <h2>O monitoramento acompanha o curso do Rio Negro em pontos prioritarios.</h2>
             <p>
-              O risco muda ao longo do rio. Por isso o layout agora usa o eixo
-              territorial como parte central da experiencia, e nao como enfeite.
+              Os pontos abaixo mostram comunidades e trechos em observacao ao
+              longo do leito do rio, com destaque para areas que pedem mais
+              atencao.
             </p>
           </div>
 
           <article className="corridor-card">
             <div className="corridor-head">
               <div>
-                <span className="minor-tag">Eixo principal</span>
+                <span className="minor-tag">Eixo monitorado</span>
                 <h3>Manaus, Novo Airao, Barcelos, Santa Isabel e Sao Gabriel</h3>
               </div>
               <p>700 km de monitoramento prioritario</p>
             </div>
 
-            <div className="corridor-track">
-              <div className="corridor-line" />
-              {routeStops.map((stop) => {
-                const stopStyle: CSSProperties = {
-                  left: `${stop.position}%`,
-                }
+            <div className="corridor-map-shell">
+              <svg
+                className="river-map"
+                viewBox="0 0 1200 460"
+                role="img"
+                aria-label="Mapa ilustrado do monitoramento no Rio Negro com pontos prioritarios"
+              >
+                <defs>
+                  <filter id="riverGlow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="10" result="blur" />
+                    <feMerge>
+                      <feMergeNode in="blur" />
+                      <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                  </filter>
+                </defs>
 
-                return (
-                  <article key={stop.name} className="corridor-stop" style={stopStyle}>
-                    <div className={`corridor-dot dot-${stop.risk}`} />
-                    <div className="corridor-cardlet">
-                      <strong>{stop.name}</strong>
-                      <span className={`risk-pill risk-${stop.risk}`}>
-                        {riskLabel[stop.risk]}
-                      </span>
-                      <p>{stop.detail}</p>
-                    </div>
-                  </article>
-                )
-              })}
+                <rect className="map-bg" x="0" y="0" width="1200" height="460" rx="24" />
+
+                <path
+                  className="tributary-path"
+                  d="M 404 238 C 396 286, 384 332, 370 382"
+                />
+                <path
+                  className="tributary-path"
+                  d="M 698 170 C 690 122, 684 88, 672 42"
+                />
+                <path
+                  className="tributary-path"
+                  d="M 904 178 C 918 128, 922 86, 916 30"
+                />
+
+                <path
+                  className="river-path river-path-glow"
+                  filter="url(#riverGlow)"
+                  d="M 78 220
+                    C 138 204, 182 210, 236 232
+                    C 290 254, 342 260, 405 242
+                    C 470 223, 538 188, 626 178
+                    C 714 168, 780 196, 856 186
+                    C 932 176, 1016 142, 1110 156
+                    C 1134 160, 1148 158, 1162 150"
+                />
+                <path
+                  className="river-path river-path-main"
+                  d="M 78 220
+                    C 138 204, 182 210, 236 232
+                    C 290 254, 342 260, 405 242
+                    C 470 223, 538 188, 626 178
+                    C 714 168, 780 196, 856 186
+                    C 932 176, 1016 142, 1110 156
+                    C 1134 160, 1148 158, 1162 150"
+                />
+                <path
+                  className="river-path river-path-highlight"
+                  d="M 78 220
+                    C 138 204, 182 210, 236 232
+                    C 290 254, 342 260, 405 242
+                    C 470 223, 538 188, 626 178
+                    C 714 168, 780 196, 856 186
+                    C 932 176, 1016 142, 1110 156
+                    C 1134 160, 1148 158, 1162 150"
+                />
+
+                {routeStops.map((stop) => (
+                  <g key={stop.name} className={`map-stop map-stop-${stop.risk}`}>
+                    <circle className="stop-halo" cx={stop.x} cy={stop.y} r="26" />
+                    <circle className="stop-ring" cx={stop.x} cy={stop.y} r="16" />
+                    <circle className="stop-core" cx={stop.x} cy={stop.y} r="8" />
+                    <text
+                      className="stop-name"
+                      x={stop.labelX}
+                      y={stop.labelY}
+                      textAnchor={stop.labelAnchor ?? 'middle'}
+                    >
+                      {stop.name}
+                    </text>
+                    {stop.riskText ? (
+                      <text
+                        className="stop-risk-text"
+                        x={stop.labelX}
+                        y={stop.labelY + 20}
+                        textAnchor={stop.labelAnchor ?? 'middle'}
+                      >
+                        {stop.riskText}
+                      </text>
+                    ) : null}
+                  </g>
+                ))}
+
+                {territoryMarkers.map((marker) => (
+                  <g key={marker.name} className={`map-stop map-stop-${marker.risk}`}>
+                    <circle className="marker-ring" cx={marker.x} cy={marker.y} r="12" />
+                    <circle className="marker-core" cx={marker.x} cy={marker.y} r="5" />
+                    <text
+                      className="marker-name"
+                      x={marker.labelX}
+                      y={marker.labelY}
+                      textAnchor={marker.labelAnchor ?? 'middle'}
+                    >
+                      {marker.name}
+                    </text>
+                  </g>
+                ))}
+
+                <g className="map-scale" aria-hidden="true">
+                  <line x1="76" y1="408" x2="316" y2="408" />
+                  <line x1="76" y1="400" x2="76" y2="416" />
+                  <line x1="316" y1="400" x2="316" y2="416" />
+                  <text x="196" y="432" textAnchor="middle">
+                    ~ 200 km
+                  </text>
+                </g>
+
+                <g className="map-north" aria-hidden="true">
+                  <text x="1132" y="420">N ↑</text>
+                </g>
+              </svg>
             </div>
           </article>
         </section>
