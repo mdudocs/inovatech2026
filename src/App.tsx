@@ -1,13 +1,10 @@
 import type { CSSProperties } from 'react'
 import type { LucideIcon } from 'lucide-react'
 import {
-  Activity,
   AlertTriangle,
   ArrowRight,
   BellRing,
-  Binary,
   BookOpen,
-  Database,
   Fish,
   FlaskConical,
   MapPinned,
@@ -18,55 +15,48 @@ import {
 } from 'lucide-react'
 import './App.css'
 
+type RiskTone = 'critical' | 'high' | 'medium'
+
 type Stat = {
   label: string
   value: string
-  detail: string
+  note: string
 }
 
-type AlertTone = 'critical' | 'warning' | 'watch' | 'info'
-
-type AlertCard = {
+type Signal = {
   title: string
   description: string
   source: string
-  tone: AlertTone
+  tone: 'critical' | 'warning' | 'attention' | 'neutral'
 }
 
-type Pillar = {
+type Layer = {
   title: string
   description: string
   icon: LucideIcon
-  tags: string[]
+  bullets: string[]
 }
 
 type Factor = {
   label: string
-  weight: string
-  colorClass: string
-  description: string
-}
-
-type SnapshotCard = {
-  label: string
-  value: string
-  change: string
-}
-
-type RiverPoint = {
-  name: string
-  risk: string
-  position: number
-  population: string
+  weight: number
+  detail: string
 }
 
 type Community = {
   name: string
-  stretch: string
+  area: string
   population: string
-  risk: 'muito-alto' | 'alto' | 'moderado'
-  species: string
+  focus: string
   note: string
+  risk: RiskTone
+}
+
+type Stop = {
+  name: string
+  detail: string
+  position: number
+  risk: RiskTone
 }
 
 type Evidence = {
@@ -75,214 +65,206 @@ type Evidence = {
   summary: string
 }
 
-type IntegrationBlock = {
+type Module = {
   title: string
   description: string
   icon: LucideIcon
   items: string[]
 }
 
+const navItems = [
+  { href: '#contexto', label: 'Contexto' },
+  { href: '#painel', label: 'Painel' },
+  { href: '#territorio', label: 'Territorio' },
+  { href: '#ciencia', label: 'Ciencia' },
+]
+
 const stats: Stat[] = [
   {
     label: 'Pessoas mais expostas',
     value: '~120 mil',
-    detail: 'Comunidades ribeirinhas e indígenas em rota prioritária.',
+    note: 'Comunidades ribeirinhas e indigenas em faixa prioritaria.',
   },
   {
-    label: 'Trecho monitorado',
+    label: 'Trecho observado',
     value: '700 km',
-    detail: 'Eixo Manaus até Santa Isabel do Rio Negro.',
+    note: 'Do baixo ao alto Rio Negro na rota inicial de monitoramento.',
   },
   {
-    label: 'Janela crítica observada',
+    label: 'Seca extrema',
     value: '32/34',
-    detail: 'Comunidades do baixo Rio Negro isoladas durante a seca extrema.',
+    note: 'Comunidades do baixo Rio Negro sem acesso direto ao rio em 2024.',
   },
   {
-    label: 'Base científica inicial',
+    label: 'Base cientifica',
     value: '11 estudos',
-    detail: 'Referências já mapeadas no material legado do projeto.',
+    note: 'Referencias ja mapeadas para apoiar o modelo de risco.',
   },
 ]
 
-const alertCards: AlertCard[] = [
+const signals: Signal[] = [
   {
     title: 'Jaraqui acima do limite',
     description:
-      'Campanhas recentes apontam jaraqui com concentração próxima ao dobro do limite regulatório para não-predadores.',
-    source: 'OXIOUUWI · 2024',
+      'Campanhas recentes indicam concentracao proxima ao dobro do limite regulatorio para peixes nao predadores.',
+    source: 'OXIOUUWI 2024',
     tone: 'critical',
   },
   {
-    title: 'Seca extrema aumenta a exposição',
+    title: 'Seca extrema amplia a exposicao',
     description:
-      'Com menor volume de água e acesso restrito ao rio, a vulnerabilidade das comunidades cresce e o risco operacional sobe.',
-    source: 'Baixo Rio Negro · 2024',
+      'A perda de acesso ao rio muda a rotina de abastecimento e aumenta a vulnerabilidade em comunidades ja fragilizadas.',
+    source: 'Baixo Rio Negro 2024',
     tone: 'warning',
   },
   {
-    title: 'pH ácido favorece metilmercúrio',
+    title: 'Agua acida favorece metilmercurio',
     description:
-      'As águas pretas do Rio Negro criam condições propícias para a forma mais tóxica e bioacumulável do contaminante.',
-    source: 'Bisinoti et al. · Referência histórica',
-    tone: 'watch',
+      'O pH baixo das aguas pretas, em torno de 4.5 em alguns trechos, favorece a forma mais toxica e bioacumulavel.',
+    source: 'Referencia historica da bacia',
+    tone: 'attention',
   },
   {
-    title: 'Monitoramento ainda fragmentado',
+    title: 'Monitoramento segue fragmentado',
     description:
-      'Sem integração entre dado ambiental, biomarcador humano e perfil alimentar, o risco segue invisível para parte da rede de saúde.',
-    source: 'Diagnóstico do projeto',
-    tone: 'info',
+      'Sem juntar agua, peixe, biomarcador humano e contexto territorial, o risco chega tarde a gestao publica.',
+    source: 'Diagnostico do projeto',
+    tone: 'neutral',
   },
 ]
 
-const pillars: Pillar[] = [
+const layers: Layer[] = [
   {
-    title: 'Monitoramento ambiental',
+    title: 'Observacao ambiental',
     description:
-      'Entrada de dados de água, sedimento e solo ripário com histórico de campanha e recorte geográfico.',
+      'Coleta e leitura de agua, sedimento e solo ripario para entender pressao ambiental e sazonalidade.',
     icon: Waves,
-    tags: ['Lumex', 'Tekran', 'ICP-MS', 'Coletas sazonais'],
+    bullets: [
+      'Campanhas por trecho e por periodo de seca ou cheia',
+      'Historico de mercurio em agua e sedimento',
+      'Pontos fixos para comparacao ao longo do tempo',
+    ],
   },
   {
-    title: 'Monitoramento clínico',
+    title: 'Vigilancia clinica',
     description:
-      'Biomarcadores, grupos vulneráveis, teletriagem e histórico de sintomas para priorização em campo.',
+      'Biomarcadores, grupos sensiveis e registro de sintomas para aproximar a ciencia do cuidado.',
     icon: FlaskConical,
-    tags: ['Hg capilar', 'Gestantes', 'Crianças', 'Telemedicina'],
+    bullets: [
+      'Hg capilar, urinario e outros biomarcadores',
+      'Priorizacao de gestantes, criancas e comunidades isoladas',
+      'Triagem e acompanhamento em articulacao com a rede local',
+    ],
   },
   {
-    title: 'Sistema preditivo',
+    title: 'Inteligencia territorial',
     description:
-      'Camada analítica para combinar variáveis ambientais, alimentares e sociodemográficas em um índice de risco.',
+      'Cruza exposicao ambiental, dieta, vulnerabilidade e acesso a servicos para gerar prioridade real.',
     icon: Radar,
-    tags: ['Heatmap', 'Alertas', 'Escalonamento', 'Risco por comunidade'],
+    bullets: [
+      'Indice de risco por comunidade',
+      'Watchlist para leitura rapida do territorio',
+      'Alertas para apoiar resposta de campo e saude publica',
+    ],
   },
 ]
 
-const riskFactors: Factor[] = [
+const factors: Factor[] = [
   {
-    label: 'Mercúrio ambiental',
-    weight: '25%',
-    colorClass: 'factor-teal',
-    description: 'Mede a pressão inicial sobre água e sedimento.',
+    label: 'Mercurio em agua',
+    weight: 25,
+    detail: 'Sinaliza a pressao ambiental de base sobre o territorio.',
   },
   {
-    label: 'Mercúrio em peixes',
-    weight: '40%',
-    colorClass: 'factor-amber',
-    description: 'Foco principal pela relevância na bioacumulação e na dieta local.',
+    label: 'Mercurio em peixes',
+    weight: 40,
+    detail: 'Tem maior peso pela relacao direta com a cadeia alimentar local.',
   },
   {
-    label: 'Frequência de consumo',
-    weight: '20%',
-    colorClass: 'factor-cyan',
-    description: 'Diferencia comunidades com dependência alimentar mais intensa do pescado.',
+    label: 'Frequencia de consumo',
+    weight: 20,
+    detail: 'Mostra o quanto a exposicao alimentar e recorrente no cotidiano.',
   },
   {
-    label: 'Vulnerabilidade social',
-    weight: '15%',
-    colorClass: 'factor-coral',
-    description: 'Considera isolamento, acesso à saúde e presença de grupos prioritários.',
-  },
-]
-
-const snapshotCards: SnapshotCard[] = [
-  {
-    label: 'Alertas em aberto',
-    value: '08',
-    change: '+3 após seca extrema',
-  },
-  {
-    label: 'Campanhas consolidadas',
-    value: '14',
-    change: '4 prontas para ingestão por API',
-  },
-  {
-    label: 'Comunidades em risco alto',
-    value: '05',
-    change: 'priorização ativa',
-  },
-  {
-    label: 'Fontes de dados previstas',
-    value: '03',
-    change: 'ambiental, clínica e territorial',
-  },
-]
-
-const riverPoints: RiverPoint[] = [
-  {
-    name: 'Manaus / Baixo Rio Negro',
-    risk: 'Muito alto na seca',
-    position: 9,
-    population: '34 comunidades afetadas',
-  },
-  {
-    name: 'Novo Airão',
-    risk: 'Moderado',
-    position: 27,
-    population: '~18 mil pessoas',
-  },
-  {
-    name: 'Barcelos',
-    risk: 'Alto',
-    position: 48,
-    population: '~27 mil pessoas',
-  },
-  {
-    name: 'Santa Isabel do Rio Negro',
-    risk: 'Alto',
-    position: 72,
-    population: '~17 mil pessoas',
-  },
-  {
-    name: 'São Gabriel da Cachoeira',
-    risk: 'Muito alto',
-    position: 92,
-    population: '~47 mil pessoas',
+    label: 'Vulnerabilidade territorial',
+    weight: 15,
+    detail: 'Considera isolamento, acesso a agua e capacidade de resposta em saude.',
   },
 ]
 
 const communities: Community[] = [
   {
-    name: 'São Gabriel da Cachoeira',
-    stretch: 'Alto Rio Negro',
+    name: 'Sao Gabriel da Cachoeira',
+    area: 'Alto Rio Negro',
     population: '~47.000',
-    risk: 'muito-alto',
-    species: 'Peixes locais consumidos diariamente',
-    note: 'Maioria indígena e necessidade de cobertura contínua.',
+    focus: 'Consumo intenso de peixe local e maioria indigena',
+    note: 'Trecho com alta sensibilidade social e necessidade de cobertura continua.',
+    risk: 'critical',
   },
   {
-    name: '34 comunidades do Baixo Rio Negro',
-    stretch: 'Manaus e entorno',
+    name: '34 comunidades do baixo Rio Negro',
+    area: 'Manaus e entorno',
     population: '~5.000',
-    risk: 'muito-alto',
-    species: 'Pesca de subsistência',
-    note: '32 delas ficaram isoladas no pico da seca extrema.',
+    focus: 'Seca extrema e pesca de subsistencia',
+    note: '32 dessas comunidades perderam acesso direto ao rio no pico da seca.',
+    risk: 'critical',
   },
   {
     name: 'Barcelos',
-    stretch: 'Médio Rio Negro',
+    area: 'Medio Rio Negro',
     population: '~27.000',
-    risk: 'alto',
-    species: 'Jaraqui, tucunaré, pacu, aruanã, tambaqui',
-    note: 'Concentra histórico relevante de estudos e consumo local.',
+    focus: 'Consumo regular de jaraqui, tucunare e tambaqui',
+    note: 'Concentra historico relevante de campanhas e leitura alimentar.',
+    risk: 'high',
   },
   {
     name: 'Santa Isabel do Rio Negro',
-    stretch: 'Alto Rio Negro',
+    area: 'Alto Rio Negro',
     population: '~17.000',
-    risk: 'alto',
-    species: 'Tucunaré, jaraqui e matrinxã',
-    note: 'Trecho extenso com baixa densidade assistencial.',
+    focus: 'Longa distancia e baixa densidade assistencial',
+    note: 'Trecho com extensao grande e resposta mais lenta em situacoes criticas.',
+    risk: 'high',
   },
   {
-    name: 'Novo Airão',
-    stretch: 'Baixo-médio Rio Negro',
+    name: 'Novo Airao',
+    area: 'Baixo-medio Rio Negro',
     population: '~18.000',
-    risk: 'moderado',
-    species: 'Pescado variado de abastecimento local',
-    note: 'Bom ponto para piloto de integração com rede municipal.',
+    focus: 'Ponto relevante para piloto de articulacao municipal',
+    note: 'Bom territorio para integrar vigilancia ambiental e atencao em saude.',
+    risk: 'medium',
+  },
+]
+
+const routeStops: Stop[] = [
+  {
+    name: 'Manaus / Baixo Rio Negro',
+    detail: 'Pressao de seca extrema e comunidades isoladas.',
+    position: 8,
+    risk: 'critical',
+  },
+  {
+    name: 'Novo Airao',
+    detail: 'Entrada operacional para articulacao local.',
+    position: 28,
+    risk: 'medium',
+  },
+  {
+    name: 'Barcelos',
+    detail: 'Trecho com leitura alimentar e historico de campanhas.',
+    position: 50,
+    risk: 'high',
+  },
+  {
+    name: 'Santa Isabel do Rio Negro',
+    detail: 'Distancia longa e resposta assistencial mais lenta.',
+    position: 73,
+    risk: 'high',
+  },
+  {
+    name: 'Sao Gabriel da Cachoeira',
+    detail: 'Maior concentracao de vulnerabilidade na rota prioritaria.',
+    position: 92,
+    risk: 'critical',
   },
 ]
 
@@ -291,80 +273,81 @@ const evidenceBase: Evidence[] = [
     title: 'Seasonal behavior of mercury species in waters and sediments from the Negro River basin',
     year: '2007',
     summary:
-      'Base importante para entender como as condições ambientais do Rio Negro influenciam a dinâmica do mercúrio.',
+      'Ajuda a entender como as condicoes das aguas pretas alteram o comportamento do mercurio ao longo da bacia.',
   },
   {
-    title: 'Primeiro IQA para rios amazônicos de águas pretas',
+    title: 'Primeiro IQA para rios amazonicos de aguas pretas',
     year: '2024',
     summary:
-      'Abre espaço para incorporar mercúrio como parâmetro relevante em uma leitura mais realista da qualidade da água local.',
+      'Abre caminho para ler qualidade da agua com parametros mais aderentes ao Rio Negro e ao debate sobre mercurio.',
   },
   {
     title: 'Drought forces Amazon Indigenous communities to drink mercury-tainted water',
     year: '2024',
     summary:
-      'Reforça a urgência de cruzar evento climático, acesso à água e vulnerabilidade humana no mesmo painel.',
+      'Reforca a ligacao entre evento extremo, acesso a agua e agravamento do risco em territorios vulneraveis.',
   },
 ]
 
-const integrationBlocks: IntegrationBlock[] = [
+const modules: Module[] = [
   {
-    title: 'Camada de ingestão',
+    title: 'Coleta em campo',
     description:
-      'Estruturei o frontend para receber listas de campanhas, comunidades, alertas e medições sem reescrever a interface.',
-    icon: Database,
+      'A camada que reune campanhas ambientais, pontos de amostragem e historico por trecho.',
+    icon: Waves,
     items: [
-      '`GET /communities` para cards e mapa',
-      '`GET /alerts` para painel operacional',
-      '`GET /measurements` para séries e filtros',
+      'Agua superficial, sedimento e solo ripario',
+      'Leitura por campanha e por sazonalidade',
+      'Rastro temporal para comparacao de risco',
     ],
   },
   {
-    title: 'Modelo analítico',
+    title: 'Leitura de risco',
     description:
-      'O índice de risco está representado visualmente e pode ser recalculado no backend quando a equipe de dados ligar banco e regras.',
-    icon: Binary,
-    items: [
-      'Peso por variável',
-      'Faixas de classificação',
-      'Multiplicadores por grupo prioritário',
-    ],
-  },
-  {
-    title: 'Acionamento da saúde',
-    description:
-      'A seção de status já comunica prioridades operacionais e pode evoluir para notificações reais e rotas de intervenção.',
+      'A parte do sistema que transforma variaveis dispersas em prioridade objetiva por comunidade.',
     icon: BellRing,
     items: [
-      'Fila de alertas por município',
-      'Histórico de respostas em campo',
-      'Encaminhamento para teleatendimento',
+      'Indice por peso de exposicao e vulnerabilidade',
+      'Watchlist de comunidades mais sensiveis',
+      'Historico de sinais que acenderam o alerta',
+    ],
+  },
+  {
+    title: 'Resposta em saude',
+    description:
+      'O modulo pensado para ligar vigilancia, cuidado e acao no territorio.',
+    icon: Users,
+    items: [
+      'Triagem de grupos prioritarios',
+      'Acompanhamento de biomarcadores humanos',
+      'Encaminhamento para equipes locais e teleapoio',
     ],
   },
 ]
 
-const navItems = [
-  { href: '#contexto', label: 'Contexto' },
-  { href: '#arquitetura', label: 'Sistema' },
-  { href: '#indicadores', label: 'Indicadores' },
-  { href: '#territorio', label: 'Território' },
-]
+const riskLabel: Record<RiskTone, string> = {
+  critical: 'Muito alto',
+  high: 'Alto',
+  medium: 'Moderado',
+}
 
 function App() {
+  const heroWatch = communities.slice(0, 3)
+
   return (
-    <div className="app-shell">
-      <header className="topbar">
-        <div className="brand">
+    <div className="page-shell">
+      <header className="site-header">
+        <div className="brand-block">
           <div className="brand-mark">
             <ShieldAlert size={18} strokeWidth={2.2} />
           </div>
           <div>
-            <p className="brand-kicker">Inovatech 2026</p>
-            <strong>Mercúrio no Rio Negro</strong>
+            <p className="brand-chip">Inovatech 2026</p>
+            <strong className="brand-title">Observatorio Mercurio Rio Negro</strong>
           </div>
         </div>
 
-        <nav className="topnav" aria-label="Seções principais">
+        <nav className="site-nav" aria-label="Navegacao principal">
           {navItems.map((item) => (
             <a key={item.href} href={item.href}>
               {item.label}
@@ -372,311 +355,328 @@ function App() {
           ))}
         </nav>
 
-        <div className="status-pill">
-          <Activity size={16} />
-          Visão demonstrativa
+        <div className="header-badge">
+          <MapPinned size={16} />
+          Amazonas | eixo Rio Negro
         </div>
       </header>
 
-      <main>
-        <section className="hero-section" id="inicio">
+      <main className="site-main">
+        <section className="hero" id="inicio">
           <div className="hero-copy">
-            <span className="eyebrow">Plataforma preditiva de saúde pública</span>
+            <span className="hero-eyebrow">Vigilancia ambiental e saude publica</span>
             <h1>
-              Plataforma de vigilância do mercúrio no Rio Negro.
+              O Rio Negro precisa de uma sala de situacao para o mercurio.
             </h1>
-            <p className="hero-text">
-              Um sistema para integrar medições ambientais, biomarcadores humanos,
-              consumo de pescado e vulnerabilidade territorial em um painel único de
-              decisão para comunidades ribeirinhas e indígenas.
+            <p className="hero-summary">
+              O site foi reorganizado como plataforma de observacao: agua, peixe,
+              biomarcadores humanos e vulnerabilidade territorial aparecem juntos
+              para mostrar onde o risco cresce primeiro e onde a resposta precisa
+              chegar antes.
             </p>
 
             <div className="hero-actions">
-              <a className="primary-action" href="#indicadores">
+              <a className="button-primary" href="#painel">
                 Ver painel de risco
                 <ArrowRight size={18} />
               </a>
-              <a className="secondary-action" href="#integracao">
-                Ver pontos de integração
+              <a className="button-secondary" href="#territorio">
+                Explorar territorios
               </a>
             </div>
 
-            <div className="stats-grid">
-              {stats.map((stat) => (
-                <article key={stat.label} className="stat-card">
-                  <span className="stat-label">{stat.label}</span>
-                  <strong className="stat-value">{stat.value}</strong>
-                  <p>{stat.detail}</p>
-                </article>
-              ))}
+            <div className="hero-notes" aria-label="Dimensoes monitoradas">
+              <span>Agua e sedimento</span>
+              <span>Peixes consumidos</span>
+              <span>Biomarcadores humanos</span>
+              <span>Resposta territorial</span>
             </div>
           </div>
 
-          <aside className="hero-panel" aria-label="Resumo operacional">
-            <div className="panel-header">
-              <span className="panel-tag">Painel de risco</span>
-              <span className="panel-badge">Demo funcional</span>
-            </div>
-
-            <div className="signal-core">
-              <div>
-                <p className="signal-kicker">Leitura prioritária</p>
-                <h2>Comunidades com maior pressão ambiental e social</h2>
-              </div>
-              <p className="signal-summary">
-                A priorização combina mercúrio em água e peixes, dependência alimentar,
-                isolamento territorial e acesso à rede de saúde.
+          <aside className="hero-board" aria-label="Radar imediato">
+            <div className="board-top">
+              <span className="board-tag">Radar imediato</span>
+              <h2>Trechos que pedem leitura continua</h2>
+              <p>
+                A priorizacao combina contaminacao ambiental, dieta baseada em
+                pescado e vulnerabilidade de acesso a saude e agua.
               </p>
             </div>
 
-            <div className="snapshot-grid">
-              {snapshotCards.map((card) => (
-                <article key={card.label} className="snapshot-card">
-                  <span>{card.label}</span>
-                  <strong>{card.value}</strong>
-                  <p>{card.change}</p>
+            <div className="board-watchlist">
+              {heroWatch.map((community, index) => (
+                <article key={community.name} className="board-watch">
+                  <span className="board-rank">0{index + 1}</span>
+                  <div className="board-watch-copy">
+                    <div className="board-watch-head">
+                      <strong>{community.name}</strong>
+                      <span className={`risk-pill risk-${community.risk}`}>
+                        {riskLabel[community.risk]}
+                      </span>
+                    </div>
+                    <p>{community.focus}</p>
+                    <small>{community.population}</small>
+                  </div>
                 </article>
               ))}
             </div>
 
-            <div className="flow-card">
-              <div className="flow-head">
-                <Database size={18} />
-                <span>Cadeia de decisão</span>
-              </div>
-              <div className="flow-steps" aria-hidden="true">
-                <span>coleta</span>
-                <span>normalização</span>
-                <span>risco</span>
-                <span>alerta</span>
-              </div>
+            <div className="board-bottom">
+              <span>Agua</span>
+              <span>Peixe</span>
+              <span>Biomarcador</span>
+              <span>Territorio</span>
             </div>
           </aside>
         </section>
 
-        <section className="content-section" id="contexto">
-          <div className="section-heading">
-            <span className="section-tag">Contexto do problema</span>
-            <h2>O risco fica invisível quando os dados estão soltos.</h2>
+        <section className="stat-band" aria-label="Indicadores principais">
+          {stats.map((stat) => (
+            <article key={stat.label} className="stat-card">
+              <span className="stat-label">{stat.label}</span>
+              <strong className="stat-value">{stat.value}</strong>
+              <p>{stat.note}</p>
+            </article>
+          ))}
+        </section>
+
+        <section className="section" id="contexto">
+          <div className="section-intro">
+            <span className="section-kicker">Por que existe</span>
+            <h2>Sem juntar territorio e saude, o risco fica invisivel.</h2>
             <p>
-              O projeto faz sentido quando território, saúde e meio ambiente aparecem
-              juntos. A proposta do site é mostrar essa conexão de forma clara para
-              pesquisa, gestão e ação em campo.
+              O projeto faz sentido quando a leitura ambiental deixa de ser uma
+              planilha isolada e passa a conversar com dieta, distancia, seca
+              extrema e resposta assistencial.
             </p>
           </div>
 
-          <div className="alert-grid">
-            {alertCards.map((alert) => (
-              <article key={alert.title} className={`alert-card tone-${alert.tone}`}>
-                <div className="alert-icon">
-                  <AlertTriangle size={18} />
-                </div>
-                <div>
-                  <h3>{alert.title}</h3>
-                  <p>{alert.description}</p>
-                  <span>{alert.source}</span>
-                </div>
-              </article>
-            ))}
+          <div className="context-layout">
+            <article className="context-story">
+              <p>
+                A presenca de mercurio na Amazonia nao e apenas um problema de
+                laboratorio. Ela entra no cotidiano das comunidades pela agua,
+                pela cadeia trofica e pela dependencia do peixe como principal
+                fonte proteica.
+              </p>
+              <p>
+                Em alguns grupos, o pescado responde por quase toda a dieta. Por
+                isso, quando o sistema cruza mercurio em agua, especies consumidas
+                e grupos mais sensiveis, ele deixa de ser um painel tecnico e vira
+                ferramenta de decisao.
+              </p>
+
+              <blockquote className="context-quote">
+                Sem integrar agua, peixe, biomarcadores e distancia da rede de
+                saude, a prioridade chega tarde demais.
+              </blockquote>
+            </article>
+
+            <div className="signal-grid">
+              {signals.map((signal) => (
+                <article
+                  key={signal.title}
+                  className={`signal-card signal-${signal.tone}`}
+                >
+                  <div className="signal-head">
+                    <div className="signal-icon">
+                      <AlertTriangle size={18} />
+                    </div>
+                    <span>{signal.source}</span>
+                  </div>
+                  <h3>{signal.title}</h3>
+                  <p>{signal.description}</p>
+                </article>
+              ))}
+            </div>
           </div>
         </section>
 
-        <section className="content-section" id="arquitetura">
-          <div className="section-heading">
-            <span className="section-tag">Arquitetura do sistema</span>
-            <h2>Três camadas para monitorar, analisar e agir.</h2>
+        <section className="section" id="sistema">
+          <div className="section-intro">
+            <span className="section-kicker">Camadas do sistema</span>
+            <h2>O site agora fala a lingua do produto, nao a lingua do template.</h2>
             <p>
-              A solução foi organizada como produto: entrada de dados, leitura de risco
-              e resposta operacional dentro do mesmo ecossistema.
+              Em vez de uma landing generica, a estrutura foi organizada em tres
+              blocos que refletem a logica real do projeto: observar, interpretar
+              e agir.
             </p>
           </div>
 
-          <div className="pillar-grid">
-            {pillars.map((pillar) => {
-              const Icon = pillar.icon
+          <div className="layer-grid">
+            {layers.map((layer, index) => {
+              const Icon = layer.icon
 
               return (
-                <article key={pillar.title} className="pillar-card">
-                  <div className="pillar-head">
-                    <div className="pillar-icon">
+                <article key={layer.title} className="layer-card">
+                  <div className="layer-head">
+                    <span className="layer-number">0{index + 1}</span>
+                    <div className="layer-icon">
                       <Icon size={22} />
                     </div>
-                    <h3>{pillar.title}</h3>
                   </div>
-                  <p>{pillar.description}</p>
-                  <div className="tag-list">
-                    {pillar.tags.map((tag) => (
-                      <span key={tag}>{tag}</span>
+                  <h3>{layer.title}</h3>
+                  <p>{layer.description}</p>
+                  <ul className="layer-list">
+                    {layer.bullets.map((bullet) => (
+                      <li key={bullet}>{bullet}</li>
                     ))}
-                  </div>
+                  </ul>
                 </article>
               )
             })}
           </div>
         </section>
 
-        <section className="content-section intelligence-section" id="indicadores">
-          <div className="section-heading">
-            <span className="section-tag">Lógica analítica</span>
-            <h2>O painel traduz variáveis dispersas em prioridade de intervenção.</h2>
+        <section className="section" id="painel">
+          <div className="section-intro">
+            <span className="section-kicker">Painel de risco</span>
+            <h2>O indice vira leitura clara, e nao formula escondida.</h2>
             <p>
-              O índice de risco organiza o raciocínio da plataforma: primeiro mede a
-              pressão ambiental, depois estima exposição alimentar e cruza isso com
-              fatores de vulnerabilidade.
+              O painel mostra como o risco por comunidade e construido e onde a
+              equipe deve olhar primeiro. Isso preserva o conteudo importante e
+              melhora muito a leitura do site.
             </p>
           </div>
 
-          <div className="intelligence-grid">
-            <article className="formula-card">
-              <div className="formula-head">
-                <div>
-                  <span className="mini-tag">IRC v1.0</span>
-                  <h3>Índice de risco por comunidade</h3>
-                </div>
-                <div className="formula-badge">
-                  <Radar size={18} />
-                  Modelo inicial
-                </div>
+          <div className="panel-layout">
+            <article className="risk-model">
+              <div className="card-heading">
+                <span className="minor-tag">IRC v1.0</span>
+                <h3>Composicao do indice de risco</h3>
               </div>
 
-              <div className="formula-expression">
+              <div className="formula-line" aria-hidden="true">
                 <span>IRC</span>
                 <span>=</span>
-                <span>Hg_água</span>
+                <span>agua</span>
                 <span>+</span>
-                <span>Hg_peixe</span>
+                <span>peixe</span>
                 <span>+</span>
                 <span>consumo</span>
                 <span>+</span>
-                <span>vulnerabilidade</span>
+                <span>territorio</span>
               </div>
 
-              <div className="factor-list">
-                {riskFactors.map((factor) => (
-                  <article key={factor.label} className="factor-card">
-                    <div className="factor-meta">
-                      <div className={`factor-dot ${factor.colorClass}`} />
-                      <strong>{factor.label}</strong>
-                      <span>{factor.weight}</span>
-                    </div>
-                    <p>{factor.description}</p>
-                  </article>
-                ))}
+              <div className="factor-stack">
+                {factors.map((factor) => {
+                  const factorStyle: CSSProperties = {
+                    width: `${factor.weight}%`,
+                  }
+
+                  return (
+                    <article key={factor.label} className="factor-row">
+                      <div className="factor-copy">
+                        <div>
+                          <strong>{factor.label}</strong>
+                          <p>{factor.detail}</p>
+                        </div>
+                        <span>{factor.weight}%</span>
+                      </div>
+                      <div className="factor-bar">
+                        <div className="factor-fill" style={factorStyle} />
+                      </div>
+                    </article>
+                  )
+                })}
+              </div>
+
+              <div className="scale-row" aria-label="Escala de risco">
+                <span className="scale-pill scale-medium">Moderado</span>
+                <span className="scale-pill scale-high">Alto</span>
+                <span className="scale-pill scale-critical">Muito alto</span>
               </div>
             </article>
 
-            <article className="support-card">
-              <div className="support-head">
-                <MapPinned size={20} />
-                <h3>Quais sinais alimentam a leitura territorial</h3>
+            <article className="priority-card">
+              <div className="card-heading">
+                <span className="minor-tag">Watchlist territorial</span>
+                <h3>Comunidades que concentram urgencia</h3>
               </div>
-              <div className="support-list">
-                <div>
-                  <span>Ambiental</span>
-                  <p>Concentração em água, solo ripário, sedimento e sazonalidade.</p>
-                </div>
-                <div>
-                  <span>Biota</span>
-                  <p>Espécies consumidas, frequência alimentar e bioacumulação.</p>
-                </div>
-                <div>
-                  <span>Clínico</span>
-                  <p>Hg capilar, urinário, sintomas, gestação e idade sensível.</p>
-                </div>
-                <div>
-                  <span>Territorial</span>
-                  <p>Isolamento, acesso à água, cobertura assistencial e evento extremo.</p>
-                </div>
+
+              <div className="priority-list">
+                {communities.map((community, index) => (
+                  <article key={community.name} className="priority-item">
+                    <span className="priority-rank">0{index + 1}</span>
+                    <div className="priority-copy">
+                      <div className="priority-head">
+                        <div>
+                          <strong>{community.name}</strong>
+                          <p>{community.area}</p>
+                        </div>
+                        <span className={`risk-pill risk-${community.risk}`}>
+                          {riskLabel[community.risk]}
+                        </span>
+                      </div>
+                      <dl className="priority-meta">
+                        <div>
+                          <dt>Populacao</dt>
+                          <dd>{community.population}</dd>
+                        </div>
+                        <div>
+                          <dt>Foco</dt>
+                          <dd>{community.focus}</dd>
+                        </div>
+                      </dl>
+                      <small>{community.note}</small>
+                    </div>
+                  </article>
+                ))}
               </div>
             </article>
           </div>
         </section>
 
-        <section className="content-section territory-section" id="territorio">
-          <div className="section-heading">
-            <span className="section-tag">Distribuição territorial</span>
-            <h2>O eixo do Rio Negro organiza a narrativa territorial da plataforma.</h2>
+        <section className="section" id="territorio">
+          <div className="section-intro">
+            <span className="section-kicker">Territorio priorizado</span>
+            <h2>O Rio Negro aparece como corredor vivo, nao como detalhe visual.</h2>
             <p>
-              O território não entra como detalhe visual. Ele é a estrutura central da
-              experiência, porque o risco muda conforme distância, sazonalidade e acesso.
+              O risco muda ao longo do rio. Por isso o layout agora usa o eixo
+              territorial como parte central da experiencia, e nao como enfeite.
             </p>
           </div>
 
-          <div className="river-card">
-            <div className="river-head">
+          <article className="corridor-card">
+            <div className="corridor-head">
               <div>
-                <span className="mini-tag">Trecho monitorado</span>
-                <h3>Manaus até São Gabriel da Cachoeira</h3>
+                <span className="minor-tag">Eixo principal</span>
+                <h3>Manaus, Novo Airao, Barcelos, Santa Isabel e Sao Gabriel</h3>
               </div>
-              <div className="river-scale">
-                <MapPinned size={18} />
-                700 km priorizados
-              </div>
+              <p>700 km de monitoramento prioritario</p>
             </div>
 
-            <div className="river-track">
-              <div className="river-line" />
-              {riverPoints.map((point, index) => {
-                const pointStyle: CSSProperties = {
-                  left: `${point.position}%`,
-                  top: index % 2 === 0 ? '34%' : '68%',
+            <div className="corridor-track">
+              <div className="corridor-line" />
+              {routeStops.map((stop) => {
+                const stopStyle: CSSProperties = {
+                  left: `${stop.position}%`,
                 }
 
                 return (
-                  <article key={point.name} className="river-point" style={pointStyle}>
-                    <div className="river-node" />
-                    <div className="river-label">
-                      <strong>{point.name}</strong>
-                      <span>{point.risk}</span>
-                      <p>{point.population}</p>
+                  <article key={stop.name} className="corridor-stop" style={stopStyle}>
+                    <div className={`corridor-dot dot-${stop.risk}`} />
+                    <div className="corridor-cardlet">
+                      <strong>{stop.name}</strong>
+                      <span className={`risk-pill risk-${stop.risk}`}>
+                        {riskLabel[stop.risk]}
+                      </span>
+                      <p>{stop.detail}</p>
                     </div>
                   </article>
                 )
               })}
             </div>
-          </div>
-
-          <div className="community-grid">
-            {communities.map((community) => (
-              <article key={community.name} className="community-card">
-                <div className="community-head">
-                  <div>
-                    <h3>{community.name}</h3>
-                    <p>{community.stretch}</p>
-                  </div>
-                  <span className={`risk-chip risk-${community.risk}`}>
-                    {community.risk === 'muito-alto'
-                      ? 'Muito alto'
-                      : community.risk === 'alto'
-                        ? 'Alto'
-                        : 'Moderado'}
-                  </span>
-                </div>
-
-                <dl className="community-meta">
-                  <div>
-                    <dt>População estimada</dt>
-                    <dd>{community.population}</dd>
-                  </div>
-                  <div>
-                    <dt>Espécies / consumo</dt>
-                    <dd>{community.species}</dd>
-                  </div>
-                </dl>
-
-                <p className="community-note">{community.note}</p>
-              </article>
-            ))}
-          </div>
+          </article>
         </section>
 
-        <section className="content-section evidence-section" id="evidencias">
-          <div className="section-heading">
-            <span className="section-tag">Base de evidências</span>
-            <h2>Ciência, campo e contexto social sustentam a proposta do sistema.</h2>
+        <section className="section" id="ciencia">
+          <div className="section-intro">
+            <span className="section-kicker">Base cientifica</span>
+            <h2>Informacao forte continua no centro do site.</h2>
             <p>
-              A plataforma se apoia em estudos sobre comportamento do mercúrio, qualidade
-              da água, eventos extremos e impactos sobre povos da Amazônia.
+              As referencias continuam presentes, mas agora entram como parte da
+              narrativa do observatorio e nao como bloco solto no fim da pagina.
             </p>
           </div>
 
@@ -694,31 +694,31 @@ function App() {
           </div>
         </section>
 
-        <section className="content-section integration-section" id="integracao">
-          <div className="section-heading">
-            <span className="section-tag">Expansão do sistema</span>
-            <h2>Estrutura pronta para crescer com backend, banco e automações.</h2>
+        <section className="section section-modules" id="modulos">
+          <div className="section-intro">
+            <span className="section-kicker">Como o ecossistema evolui</span>
+            <h2>Coleta, leitura e resposta continuam claros no desenho do site.</h2>
             <p>
-              A experiência visual já separa entidades, fluxos e módulos de decisão para
-              facilitar a próxima etapa de desenvolvimento com API e persistência real.
+              Essas frentes mantem a proposta coerente com o projeto e deixam a
+              experiencia pronta para crescer depois sem perder direcao.
             </p>
           </div>
 
-          <div className="integration-grid">
-            {integrationBlocks.map((block) => {
-              const Icon = block.icon
+          <div className="module-grid">
+            {modules.map((module) => {
+              const Icon = module.icon
 
               return (
-                <article key={block.title} className="integration-card">
-                  <div className="integration-head">
-                    <div className="integration-icon">
-                      <Icon size={20} />
+                <article key={module.title} className="module-card">
+                  <div className="module-head">
+                    <div className="module-icon">
+                      <Icon size={22} />
                     </div>
-                    <h3>{block.title}</h3>
+                    <h3>{module.title}</h3>
                   </div>
-                  <p>{block.description}</p>
-                  <ul>
-                    {block.items.map((item) => (
+                  <p>{module.description}</p>
+                  <ul className="module-list">
+                    {module.items.map((item) => (
                       <li key={item}>{item}</li>
                     ))}
                   </ul>
@@ -729,14 +729,16 @@ function App() {
         </section>
       </main>
 
-      <footer className="page-footer">
+      <footer className="site-footer">
         <div>
           <strong>Inovatech 2026</strong>
-          <p>Plataforma de vigilância e priorização de risco por mercúrio no Rio Negro.</p>
+          <p>
+            Plataforma para monitoramento territorial do mercurio no Rio Negro.
+          </p>
         </div>
-        <div className="footer-icons" aria-hidden="true">
-          <Users size={18} />
+        <div className="footer-badge" aria-hidden="true">
           <Fish size={18} />
+          <Users size={18} />
           <Waves size={18} />
         </div>
       </footer>
