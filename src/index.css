@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:wght@500;600;700&display=swap');
 
 :root {
   --bg: #efe6d8;
@@ -18,8 +18,8 @@
   --coral-dark: #9e4f31;
   --shadow: 0 28px 54px rgba(70, 53, 23, 0.08);
   --shadow-soft: 0 14px 30px rgba(70, 53, 23, 0.06);
-  --display: 'Cormorant Garamond', Georgia, serif;
-  --body: 'Space Grotesk', 'Segoe UI', sans-serif;
+  --display: 'IBM Plex Serif', Georgia, serif;
+  --body: 'IBM Plex Sans', 'Segoe UI', sans-serif;
   --mono: 'IBM Plex Mono', Consolas, monospace;
 
   color-scheme: light;

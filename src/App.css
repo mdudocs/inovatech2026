@@ -148,11 +148,13 @@
   overflow: hidden;
   padding: clamp(30px, 4vw, 52px);
   border: 1px solid var(--line-strong);
-  border-radius: 36px;
+  border-radius: 28px;
   background:
-    radial-gradient(circle at 18% 18%, rgba(45, 155, 143, 0.1), transparent 28%),
-    radial-gradient(circle at 82% 12%, rgba(201, 106, 69, 0.12), transparent 18%),
-    linear-gradient(180deg, rgba(255, 250, 241, 0.98), rgba(247, 239, 225, 0.96));
+    linear-gradient(rgba(23, 93, 110, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(23, 93, 110, 0.035) 1px, transparent 1px),
+    radial-gradient(circle at 18% 18%, rgba(45, 155, 143, 0.08), transparent 28%),
+    linear-gradient(180deg, rgba(255, 251, 244, 0.98), rgba(248, 242, 232, 0.96));
+  background-size: 100% 40px, 40px 100%, 100% 100%, 100% 100%;
   box-shadow: var(--shadow);
 }
 
@@ -171,13 +173,13 @@
 .hero-copy::after {
   content: '';
   position: absolute;
-  right: 60px;
-  top: 42px;
-  width: 160px;
-  height: 160px;
-  border: 1px solid rgba(23, 93, 110, 0.12);
-  border-radius: 30px;
-  transform: rotate(10deg);
+  right: 42px;
+  top: 34px;
+  width: 148px;
+  height: 148px;
+  border: 1px solid rgba(23, 93, 110, 0.08);
+  border-radius: 22px;
+  transform: rotate(6deg);
 }
 
 .hero-eyebrow,
@@ -202,21 +204,21 @@
 .hero-copy h1,
 .section-intro h2 {
   margin: 18px 0 0;
-  max-width: 11ch;
+  max-width: 13ch;
   color: var(--ink);
   font-family: var(--display);
-  font-size: clamp(3.4rem, 7vw, 6rem);
-  line-height: 0.9;
-  letter-spacing: -0.06em;
+  font-size: clamp(2.7rem, 5vw, 4.5rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
   text-wrap: balance;
 }
 
 .hero-summary {
-  max-width: 60ch;
+  max-width: 64ch;
   margin: 22px 0 0;
   color: var(--muted-strong);
-  font-size: 1.05rem;
-  line-height: 1.76;
+  font-size: 1rem;
+  line-height: 1.8;
 }
 
 .hero-actions {
@@ -269,27 +271,38 @@
   background: rgba(23, 93, 110, 0.06);
 }
 
-.hero-notes {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+.hero-guides {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
 }
 
-.hero-notes span {
-  display: inline-flex;
-  padding: 10px 12px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.72);
+.hero-guide-card {
+  padding: 16px 16px 18px;
+  border-radius: 18px;
   border: 1px solid rgba(23, 93, 110, 0.1);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.hero-guide-card strong {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--ink);
+  font-size: 0.96rem;
+}
+
+.hero-guide-card p {
+  margin: 0;
   color: var(--muted-strong);
-  font-size: 0.86rem;
+  font-size: 0.92rem;
+  line-height: 1.65;
 }
 
 .hero-board {
   position: relative;
   overflow: hidden;
   padding: 26px;
-  border-radius: 36px;
+  border-radius: 28px;
   border: 1px solid rgba(17, 52, 61, 0.16);
   background:
     radial-gradient(circle at top right, rgba(228, 198, 142, 0.2), transparent 24%),
@@ -311,12 +324,12 @@
 
 .board-top h2 {
   margin: 16px 0 10px;
-  max-width: 12ch;
+  max-width: 14ch;
   color: #fffdf8;
   font-family: var(--display);
-  font-size: clamp(2.15rem, 4vw, 3.2rem);
-  line-height: 0.94;
-  letter-spacing: -0.05em;
+  font-size: clamp(1.95rem, 3vw, 2.75rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
 }
 
 .board-top p {
@@ -412,26 +425,26 @@
 
 .stat-card {
   padding: 22px 20px;
-  border-radius: 26px;
+  border-radius: 18px;
   border: 1px solid var(--line);
   background: var(--surface);
   box-shadow: var(--shadow-soft);
 }
 
 .stat-card:nth-child(1) {
-  background: linear-gradient(180deg, #fff8ef 0%, #f5ecdf 100%);
+  border-top: 4px solid var(--river);
 }
 
 .stat-card:nth-child(2) {
-  background: linear-gradient(180deg, #f4fbfa 0%, #e5f1ef 100%);
+  border-top: 4px solid var(--teal);
 }
 
 .stat-card:nth-child(3) {
-  background: linear-gradient(180deg, #fff7f1 0%, #f4e7dc 100%);
+  border-top: 4px solid var(--coral);
 }
 
 .stat-card:nth-child(4) {
-  background: linear-gradient(180deg, #fbf7f0 0%, #f0e7d8 100%);
+  border-top: 4px solid var(--gold);
 }
 
 .stat-label {
@@ -467,13 +480,14 @@
 }
 
 .section-intro h2 {
-  font-size: clamp(2.5rem, 4vw, 4.4rem);
+  font-size: clamp(2rem, 3vw, 3rem);
 }
 
 .section-intro p {
   max-width: 62ch;
   margin: 18px 0 0;
   color: var(--muted-strong);
+  font-size: 1rem;
   line-height: 1.72;
 }
 
@@ -489,7 +503,7 @@
 .priority-card,
 .corridor-card,
 .module-card {
-  border-radius: 30px;
+  border-radius: 24px;
   border: 1px solid var(--line);
   background: rgba(255, 250, 241, 0.78);
   box-shadow: var(--shadow-soft);
@@ -517,10 +531,11 @@
   border-radius: 0 22px 22px 0;
   background: rgba(23, 93, 110, 0.06);
   color: var(--ink);
-  font-family: var(--display);
-  font-size: 1.8rem;
-  line-height: 1.08;
-  letter-spacing: -0.03em;
+  font-family: var(--body);
+  font-size: 1.08rem;
+  font-weight: 600;
+  line-height: 1.55;
+  letter-spacing: 0;
 }
 
 .signal-grid,
@@ -537,7 +552,7 @@
 
 .signal-card {
   padding: 22px;
-  border-radius: 24px;
+  border-radius: 18px;
   border: 1px solid var(--line);
   background: rgba(255, 250, 241, 0.88);
   box-shadow: var(--shadow-soft);
@@ -643,7 +658,7 @@
 .module-card,
 .evidence-card {
   padding: 24px;
-  border-radius: 28px;
+  border-radius: 18px;
   border: 1px solid var(--line);
   background: rgba(255, 250, 241, 0.84);
   box-shadow: var(--shadow-soft);
@@ -712,7 +727,7 @@
   gap: 10px;
   margin-bottom: 22px;
   padding: 18px;
-  border-radius: 22px;
+  border-radius: 18px;
   background: rgba(23, 93, 110, 0.05);
   border: 1px solid rgba(23, 93, 110, 0.08);
 }
@@ -739,7 +754,7 @@
 
 .factor-row {
   padding: 16px;
-  border-radius: 20px;
+  border-radius: 16px;
   background: rgba(255, 255, 255, 0.64);
   border: 1px solid rgba(23, 93, 110, 0.08);
 }
@@ -834,7 +849,7 @@
   grid-template-columns: auto 1fr;
   gap: 14px;
   padding: 16px;
-  border-radius: 22px;
+  border-radius: 16px;
   background: rgba(255, 255, 255, 0.62);
   border: 1px solid rgba(23, 93, 110, 0.08);
 }
@@ -1223,8 +1238,8 @@
   margin-bottom: 20px;
   color: #00e0b8;
   font-family: var(--display);
-  font-size: clamp(2.8rem, 5vw, 4.2rem);
-  letter-spacing: -0.04em;
+  font-size: clamp(2.3rem, 4vw, 3.4rem);
+  letter-spacing: -0.02em;
 }
 
 .footer-brand p {
@@ -1323,6 +1338,10 @@
   .hero,
   .context-layout,
   .panel-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-guides {
     grid-template-columns: 1fr;
   }
 

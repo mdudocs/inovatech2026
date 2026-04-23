@@ -27,6 +27,11 @@ type Signal = {
   tone: 'critical' | 'warning' | 'attention' | 'neutral'
 }
 
+type QuickAccessCard = {
+  title: string
+  description: string
+}
+
 type Layer = {
   title: string
   description: string
@@ -82,6 +87,24 @@ const navItems = [
   { href: '#orientacoes', label: 'Orientacoes' },
   { href: '#painel', label: 'Painel' },
   { href: '#territorio', label: 'Territorio' },
+]
+
+const quickAccessCards: QuickAccessCard[] = [
+  {
+    title: 'Quando procurar atendimento',
+    description:
+      'Em caso de tremores, dormencia, alteracao visual, dificuldade de coordenacao ou suspeita de exposicao frequente.',
+  },
+  {
+    title: 'Quem deve ter mais atencao',
+    description:
+      'Gestantes, criancas, familias com alto consumo de peixe e comunidades em seca extrema ou isolamento.',
+  },
+  {
+    title: 'Para que serve este portal',
+    description:
+      'Acompanhar alertas, entender o risco por comunidade e apoiar orientacao, triagem e vigilancia no territorio.',
+  },
 ]
 
 const stats: Stat[] = [
@@ -393,14 +416,16 @@ function App() {
       <main className="site-main">
         <section className="hero" id="inicio">
           <div className="hero-copy">
-            <span className="hero-eyebrow">Vigilancia ambiental e saude publica</span>
+            <span className="hero-eyebrow">
+              Informacao para populacao, medicos e agentes
+            </span>
             <h1>
-              O Rio Negro precisa de uma sala de situacao para o mercurio.
+              Boletim de monitoramento do mercurio no Rio Negro.
             </h1>
             <p className="hero-summary">
-              Este portal reune alertas, orientacoes e leitura territorial para
-              apoiar a populacao, profissionais de saude e agentes de campo no
-              acompanhamento do risco por mercurio ao longo do Rio Negro.
+              Alertas ambientais, comunidades em observacao, orientacoes
+              imediatas e leitura territorial reunidos em um unico lugar para
+              apoiar prevencao, cuidado e vigilancia ao longo do Rio Negro.
             </p>
 
             <div className="hero-actions">
@@ -413,21 +438,24 @@ function App() {
               </a>
             </div>
 
-            <div className="hero-notes" aria-label="Dimensoes monitoradas">
-              <span>Agua e sedimento</span>
-              <span>Peixes consumidos</span>
-              <span>Biomarcadores humanos</span>
-              <span>Resposta territorial</span>
+            <div className="hero-guides" aria-label="Acessos rapidos">
+              {quickAccessCards.map((item) => (
+                <article key={item.title} className="hero-guide-card">
+                  <strong>{item.title}</strong>
+                  <p>{item.description}</p>
+                </article>
+              ))}
             </div>
           </div>
 
           <aside className="hero-board" aria-label="Radar imediato">
             <div className="board-top">
-              <span className="board-tag">Radar imediato</span>
-              <h2>Trechos que pedem leitura continua</h2>
+              <span className="board-tag">Prioridades territoriais</span>
+              <h2>Comunidades que pedem acompanhamento mais atento</h2>
               <p>
-                A priorizacao combina contaminacao ambiental, dieta baseada em
-                pescado e vulnerabilidade de acesso a saude e agua.
+                A leitura abaixo cruza sinais ambientais, consumo de pescado,
+                isolamento e acesso a saude para destacar onde a vigilancia deve
+                ser mais rapida.
               </p>
             </div>
 
@@ -452,8 +480,8 @@ function App() {
             <div className="board-bottom">
               <span>Agua</span>
               <span>Peixe</span>
-              <span>Biomarcador</span>
-              <span>Territorio</span>
+              <span>Sintomas</span>
+              <span>Acesso</span>
             </div>
           </aside>
         </section>
@@ -471,10 +499,11 @@ function App() {
         <section className="section" id="alertas">
           <div className="section-intro">
             <span className="section-kicker">Alertas do momento</span>
-            <h2>O que esta em observacao agora no territorio.</h2>
+            <h2>Situacao atual do monitoramento no territorio.</h2>
             <p>
-              Este painel resume os sinais que pedem mais atencao no Rio Negro
-              e ajuda a identificar onde a vigilancia precisa ser reforcada.
+              Este painel resume os sinais mais relevantes no Rio Negro e ajuda
+              a identificar onde a orientacao, a triagem e a vigilancia precisam
+              ser reforcadas.
             </p>
           </div>
 
@@ -520,7 +549,7 @@ function App() {
         <section className="section" id="orientacoes">
           <div className="section-intro">
             <span className="section-kicker">Orientacoes rapidas</span>
-            <h2>Informacao util para quem vive, atende e atua no territorio.</h2>
+            <h2>O que observar e como usar esta informacao no dia a dia.</h2>
             <p>
               Esta parte foi pensada para uso direto: apoio para a populacao,
               para profissionais de saude e para agentes que precisam agir no
@@ -556,7 +585,7 @@ function App() {
         <section className="section" id="painel">
           <div className="section-intro">
             <span className="section-kicker">Painel de risco</span>
-            <h2>Comunidades em observacao e sinais que elevam o risco.</h2>
+            <h2>Leitura de risco por comunidade e por sinal observado.</h2>
             <p>
               O objetivo aqui e ajudar a leitura do territorio: quais sinais
               aumentam a preocupacao e quais comunidades pedem resposta mais
@@ -782,7 +811,7 @@ function App() {
                 </g>
 
                 <g className="map-north" aria-hidden="true">
-                  <text x="1132" y="420">N ↑</text>
+                  <text x="1132" y="420">N</text>
                 </g>
               </svg>
             </div>
@@ -792,7 +821,7 @@ function App() {
         <section className="section" id="ciencia">
           <div className="section-intro">
             <span className="section-kicker">Base cientifica</span>
-            <h2>Informacao forte continua no centro do site.</h2>
+            <h2>Referencias para apoio tecnico e tomada de decisao.</h2>
             <p>
               As referencias abaixo ajudam profissionais e gestores a entender o
               contexto ambiental e sanitario por tras dos alertas.
@@ -841,7 +870,7 @@ function App() {
 
               <div className="footer-tags">
                 <span>conecthus.org.br</span>
-                <span>Rio Negro · AM</span>
+                <span>Rio Negro | AM</span>
                 <span>2023-2026</span>
               </div>
             </div>
