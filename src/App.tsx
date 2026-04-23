@@ -68,7 +68,6 @@ type Stop = {
   labelX: number
   labelY: number
   labelAnchor?: 'start' | 'middle' | 'end'
-  riskText?: string
 }
 
 type TerritoryMarker = {
@@ -324,7 +323,6 @@ const routeStops: Stop[] = [
     labelX: 990,
     labelY: 196,
     labelAnchor: 'start',
-    riskText: 'Muito alto',
   },
 ]
 
@@ -398,6 +396,13 @@ const riskLabel: Record<RiskTone, string> = {
   high: 'Alto',
   medium: 'Moderado',
 }
+
+const mapLegend = [
+  { key: 'low', label: 'Baixo' },
+  { key: 'medium', label: 'Moderado' },
+  { key: 'high', label: 'Alto' },
+  { key: 'critical', label: 'Muito alto' },
+] as const
 
 const signalToneMeta: Record<
   SignalTone,
@@ -877,16 +882,6 @@ function App() {
                     >
                       {stop.name}
                     </text>
-                    {stop.riskText ? (
-                      <text
-                        className="stop-risk-text"
-                        x={stop.labelX}
-                        y={stop.labelY + 20}
-                        textAnchor={stop.labelAnchor ?? 'middle'}
-                      >
-                        {stop.riskText}
-                      </text>
-                    ) : null}
                   </g>
                 ))}
 
@@ -933,6 +928,33 @@ function App() {
                     </div>
                   </foreignObject>
                 ) : null}
+
+                <g className="map-legend" aria-hidden="true">
+                  <rect className="map-legend-box" x="882" y="318" width="238" height="92" rx="18" />
+                  <text className="map-legend-title" x="902" y="343">
+                    Legenda de risco
+                  </text>
+                  {mapLegend.map((item, index) => {
+                    const column = index % 2
+                    const row = Math.floor(index / 2)
+                    const x = 904 + column * 112
+                    const y = 366 + row * 24
+
+                    return (
+                      <g key={item.key} className="map-legend-item">
+                        <circle
+                          className={`map-legend-dot map-legend-dot-${item.key}`}
+                          cx={x}
+                          cy={y - 4}
+                          r="5"
+                        />
+                        <text className="map-legend-label" x={x + 14} y={y}>
+                          {item.label}
+                        </text>
+                      </g>
+                    )
+                  })}
+                </g>
 
                 <g className="map-scale" aria-hidden="true">
                   <line x1="76" y1="408" x2="316" y2="408" />
