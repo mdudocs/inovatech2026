@@ -1,31 +1,61 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:wght@500;600;700&display=swap');
 
 :root {
-  --bg: #efe6d8;
-  --surface: #fff9f0;
-  --ink: #20343a;
-  --ink-soft: #34484d;
-  --muted: #69797b;
-  --muted-strong: #526568;
-  --line: rgba(78, 87, 80, 0.14);
-  --line-strong: rgba(78, 87, 80, 0.22);
-  --river: #175d6e;
-  --river-dark: #103f4b;
-  --teal: #2d9b8f;
-  --gold: #b8904e;
-  --gold-dark: #8b6830;
-  --coral: #c96a45;
-  --coral-dark: #9e4f31;
-  --panel-bg: #0f2930;
-  --panel-bg-soft: #15333d;
-  --panel-grid: rgba(111, 151, 160, 0.12);
-  --panel-grid-soft: rgba(111, 151, 160, 0.08);
-  --panel-border: rgba(111, 151, 160, 0.18);
-  --panel-text: #edf6f3;
-  --panel-muted: rgba(171, 196, 201, 0.82);
-  --panel-accent: #4cc8cf;
-  --shadow: 0 28px 54px rgba(70, 53, 23, 0.08);
-  --shadow-soft: 0 14px 30px rgba(70, 53, 23, 0.06);
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface-soft: #f4f9fb;
+  --surface-tint: rgba(23, 93, 110, 0.04);
+  --surface-tint-strong: rgba(23, 93, 110, 0.08);
+  --surface-glass: rgba(255, 255, 255, 0.86);
+  --ink: #1b3239;
+  --ink-soft: #304851;
+  --muted: #6b8087;
+  --muted-strong: #536870;
+  --line: rgba(23, 93, 110, 0.12);
+  --line-strong: rgba(23, 93, 110, 0.18);
+  --river: #196578;
+  --river-dark: #10424f;
+  --teal: #2f9d94;
+  --gold: #b48b43;
+  --gold-dark: #865f20;
+  --coral: #cb6651;
+  --coral-dark: #a44b39;
+  --panel-bg: #edf6f8;
+  --panel-bg-soft: #f8fcfd;
+  --panel-grid: rgba(23, 93, 110, 0.08);
+  --panel-grid-soft: rgba(23, 93, 110, 0.05);
+  --panel-border: rgba(23, 93, 110, 0.12);
+  --panel-text: #17323a;
+  --panel-muted: rgba(48, 72, 81, 0.78);
+  --panel-accent: #196578;
+  --panel-surface: rgba(255, 255, 255, 0.56);
+  --panel-surface-strong: rgba(255, 255, 255, 0.78);
+  --panel-line: rgba(23, 93, 110, 0.08);
+  --panel-shadow: 0 28px 56px rgba(16, 39, 47, 0.12);
+  --hero-grid: rgba(23, 93, 110, 0.04);
+  --hero-grid-soft: rgba(23, 93, 110, 0.03);
+  --hero-start: rgba(255, 255, 255, 0.98);
+  --hero-end: rgba(244, 249, 251, 0.98);
+  --pill-bg: rgba(255, 255, 255, 0.76);
+  --pill-border: rgba(23, 93, 110, 0.12);
+  --map-tributary: rgba(29, 101, 138, 0.32);
+  --map-water-deep: #2a6f87;
+  --map-water-highlight: #4dbbe8;
+  --map-label: #183038;
+  --map-muted: rgba(62, 87, 96, 0.82);
+  --map-scale: rgba(62, 87, 96, 0.34);
+  --map-stop-fill: rgba(247, 251, 252, 0.96);
+  --map-critical: #ff6b63;
+  --map-high: #f2b22e;
+  --bg-spot-1: rgba(45, 155, 143, 0.05);
+  --bg-spot-2: rgba(23, 93, 110, 0.05);
+  --bg-start: #ffffff;
+  --bg-end: #f3f8fa;
+  --body-grid: rgba(23, 93, 110, 0.026);
+  --body-grid-soft: rgba(23, 93, 110, 0.02);
+  --body-glow: rgba(45, 155, 143, 0.12);
+  --shadow: 0 26px 52px rgba(16, 39, 47, 0.08);
+  --shadow-soft: 0 14px 28px rgba(16, 39, 47, 0.06);
   --display: 'IBM Plex Serif', Georgia, serif;
   --body: 'IBM Plex Sans', 'Segoe UI', sans-serif;
   --mono: 'IBM Plex Mono', Consolas, monospace;
@@ -36,14 +66,74 @@
   font-weight: 500;
   color: var(--ink-soft);
   background:
-    radial-gradient(circle at top left, rgba(45, 155, 143, 0.08), transparent 24%),
-    radial-gradient(circle at 88% 12%, rgba(201, 106, 69, 0.08), transparent 16%),
-    linear-gradient(180deg, #f5eddc 0%, #efe6d8 100%);
+    radial-gradient(circle at top left, var(--bg-spot-1), transparent 24%),
+    radial-gradient(circle at 88% 12%, var(--bg-spot-2), transparent 16%),
+    linear-gradient(180deg, var(--bg-start) 0%, var(--bg-end) 100%);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   scroll-behavior: smooth;
+}
+
+:root[data-theme='dark'] {
+  --bg: #081519;
+  --surface: #102126;
+  --surface-soft: #142a31;
+  --surface-tint: rgba(117, 176, 189, 0.08);
+  --surface-tint-strong: rgba(117, 176, 189, 0.12);
+  --surface-glass: rgba(12, 26, 31, 0.88);
+  --ink: #ebf4f3;
+  --ink-soft: #c7d6da;
+  --muted: #8fa6ac;
+  --muted-strong: #aec1c6;
+  --line: rgba(145, 174, 181, 0.14);
+  --line-strong: rgba(145, 174, 181, 0.22);
+  --river: #49a9c1;
+  --river-dark: #d4eef2;
+  --teal: #45c2b1;
+  --gold: #d7aa56;
+  --gold-dark: #efc56f;
+  --coral: #ea7b68;
+  --coral-dark: #ff9b8d;
+  --panel-bg: #0b1d23;
+  --panel-bg-soft: #10262d;
+  --panel-grid: rgba(111, 151, 160, 0.12);
+  --panel-grid-soft: rgba(111, 151, 160, 0.08);
+  --panel-border: rgba(111, 151, 160, 0.18);
+  --panel-text: #edf6f3;
+  --panel-muted: rgba(171, 196, 201, 0.82);
+  --panel-accent: #4cc8cf;
+  --panel-surface: rgba(255, 255, 255, 0.04);
+  --panel-surface-strong: rgba(255, 255, 255, 0.08);
+  --panel-line: rgba(255, 255, 255, 0.06);
+  --panel-shadow: 0 30px 60px rgba(6, 17, 24, 0.28);
+  --hero-grid: rgba(111, 151, 160, 0.08);
+  --hero-grid-soft: rgba(111, 151, 160, 0.06);
+  --hero-start: rgba(13, 31, 37, 0.98);
+  --hero-end: rgba(10, 25, 30, 0.98);
+  --pill-bg: rgba(255, 255, 255, 0.04);
+  --pill-border: rgba(145, 174, 181, 0.16);
+  --map-tributary: rgba(39, 106, 145, 0.48);
+  --map-water-deep: #1b6179;
+  --map-water-highlight: #58cde8;
+  --map-label: #eef2ee;
+  --map-muted: rgba(158, 180, 188, 0.82);
+  --map-scale: rgba(220, 226, 229, 0.35);
+  --map-stop-fill: rgba(8, 18, 25, 0.9);
+  --map-critical: #ff7167;
+  --map-high: #ffbf32;
+  --bg-spot-1: rgba(45, 155, 143, 0.08);
+  --bg-spot-2: rgba(201, 106, 69, 0.08);
+  --bg-start: #09171b;
+  --bg-end: #081317;
+  --body-grid: rgba(111, 151, 160, 0.035);
+  --body-grid-soft: rgba(111, 151, 160, 0.025);
+  --body-glow: rgba(45, 155, 143, 0.14);
+  --shadow: 0 26px 54px rgba(3, 10, 13, 0.24);
+  --shadow-soft: 0 14px 30px rgba(3, 10, 13, 0.18);
+
+  color-scheme: dark;
 }
 
 * {
@@ -59,9 +149,9 @@ body {
   margin: 0;
   min-height: 100vh;
   background:
-    radial-gradient(circle at top left, rgba(45, 155, 143, 0.08), transparent 24%),
-    radial-gradient(circle at 88% 12%, rgba(201, 106, 69, 0.08), transparent 16%),
-    linear-gradient(180deg, #f5eddc 0%, #efe6d8 100%);
+    radial-gradient(circle at top left, var(--bg-spot-1), transparent 24%),
+    radial-gradient(circle at 88% 12%, var(--bg-spot-2), transparent 16%),
+    linear-gradient(180deg, var(--bg-start) 0%, var(--bg-end) 100%);
 }
 
 body::before {
@@ -70,8 +160,8 @@ body::before {
   inset: 0;
   pointer-events: none;
   background-image:
-    linear-gradient(rgba(23, 93, 110, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(23, 93, 110, 0.025) 1px, transparent 1px);
+    linear-gradient(var(--body-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--body-grid-soft) 1px, transparent 1px);
   background-size: 100% 54px, 54px 100%;
   opacity: 0.32;
   mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.6), transparent 88%);
@@ -84,7 +174,7 @@ body::after {
   width: 340px;
   height: 340px;
   border-radius: 999px;
-  background: radial-gradient(circle, rgba(45, 155, 143, 0.14), transparent 65%);
+  background: radial-gradient(circle, var(--body-glow), transparent 65%);
   filter: blur(20px);
   pointer-events: none;
 }

@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import type { CSSProperties } from 'react'
 import type { LucideIcon } from 'lucide-react'
 import {
@@ -7,12 +8,15 @@ import {
   BookOpen,
   FlaskConical,
   MapPinned,
+  Moon,
   ShieldAlert,
+  SunMedium,
   Users,
 } from 'lucide-react'
 import './App.css'
 
 type RiskTone = 'critical' | 'high' | 'medium'
+type ThemeMode = 'light' | 'dark'
 
 type Stat = {
   label: string
@@ -384,7 +388,24 @@ const riskLabel: Record<RiskTone, string> = {
 }
 
 function App() {
+  const [theme, setTheme] = useState<ThemeMode>(() => {
+    if (typeof window === 'undefined') {
+      return 'light'
+    }
+
+    const storedTheme = window.localStorage.getItem('inovatech-theme')
+
+    return storedTheme === 'light' || storedTheme === 'dark'
+      ? storedTheme
+      : 'light'
+  })
   const heroWatch = communities.slice(0, 3)
+  const nextThemeLabel = theme === 'light' ? 'Modo escuro' : 'Modo claro'
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme
+    window.localStorage.setItem('inovatech-theme', theme)
+  }, [theme])
 
   return (
     <div className="page-shell">
@@ -407,9 +428,23 @@ function App() {
           ))}
         </nav>
 
-        <div className="header-badge">
-          <MapPinned size={16} />
-          Amazonas | eixo Rio Negro
+        <div className="header-actions">
+          <button
+            type="button"
+            className="theme-toggle"
+            onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+            aria-label={nextThemeLabel}
+            aria-pressed={theme === 'dark'}
+            title={nextThemeLabel}
+          >
+            {theme === 'light' ? <Moon size={16} /> : <SunMedium size={16} />}
+            {nextThemeLabel}
+          </button>
+
+          <div className="header-badge">
+            <MapPinned size={16} />
+            Amazonas | eixo Rio Negro
+          </div>
         </div>
       </header>
 
