@@ -16,6 +16,14 @@
   --gold-dark: #8b6830;
   --coral: #c96a45;
   --coral-dark: #9e4f31;
+  --panel-bg: #0f2930;
+  --panel-bg-soft: #15333d;
+  --panel-grid: rgba(111, 151, 160, 0.12);
+  --panel-grid-soft: rgba(111, 151, 160, 0.08);
+  --panel-border: rgba(111, 151, 160, 0.18);
+  --panel-text: #edf6f3;
+  --panel-muted: rgba(171, 196, 201, 0.82);
+  --panel-accent: #4cc8cf;
   --shadow: 0 28px 54px rgba(70, 53, 23, 0.08);
   --shadow-soft: 0 14px 30px rgba(70, 53, 23, 0.06);
   --display: 'IBM Plex Serif', Georgia, serif;

@@ -303,12 +303,12 @@
   overflow: hidden;
   padding: 26px;
   border-radius: 28px;
-  border: 1px solid rgba(17, 52, 61, 0.16);
+  border: 1px solid var(--panel-border);
   background:
-    radial-gradient(circle at top right, rgba(228, 198, 142, 0.2), transparent 24%),
-    linear-gradient(180deg, #173842 0%, #122e36 100%);
+    radial-gradient(circle at top right, rgba(76, 200, 207, 0.14), transparent 24%),
+    linear-gradient(180deg, var(--panel-bg-soft) 0%, var(--panel-bg) 100%);
   box-shadow: var(--shadow);
-  color: #edf6f3;
+  color: var(--panel-text);
 }
 
 .hero-board::after {
@@ -325,7 +325,7 @@
 .board-top h2 {
   margin: 16px 0 10px;
   max-width: 14ch;
-  color: #fffdf8;
+  color: var(--panel-text);
   font-family: var(--display);
   font-size: clamp(1.95rem, 3vw, 2.75rem);
   line-height: 1;
@@ -335,7 +335,7 @@
 .board-top p {
   max-width: 34ch;
   margin: 0;
-  color: rgba(237, 246, 243, 0.76);
+  color: var(--panel-muted);
   line-height: 1.65;
 }
 
@@ -352,8 +352,8 @@
   align-items: start;
   padding: 14px;
   border-radius: 22px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .board-rank {
@@ -363,8 +363,8 @@
   width: 38px;
   height: 38px;
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.1);
-  color: #fffdf8;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--panel-text);
   font-family: var(--mono);
   font-size: 0.78rem;
   letter-spacing: 0.08em;
@@ -379,17 +379,17 @@
 
 .board-watch-copy strong {
   display: block;
-  color: #fffdf8;
+  color: var(--panel-text);
 }
 
 .board-watch-copy p {
   margin: 8px 0 6px;
-  color: rgba(237, 246, 243, 0.78);
+  color: var(--panel-muted);
   line-height: 1.55;
 }
 
 .board-watch-copy small {
-  color: rgba(237, 246, 243, 0.6);
+  color: rgba(171, 196, 201, 0.62);
 }
 
 .board-bottom {
@@ -408,9 +408,9 @@
   min-height: 52px;
   padding: 10px 8px;
   border-radius: 16px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #edf6f3;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: var(--panel-text);
   font-family: var(--mono);
   font-size: 0.74rem;
   letter-spacing: 0.12em;
@@ -925,7 +925,7 @@
 
 .corridor-head p {
   margin: 0;
-  color: var(--muted);
+  color: rgba(171, 196, 201, 0.72);
   font-family: var(--mono);
   font-size: 0.74rem;
   letter-spacing: 0.1em;
@@ -937,12 +937,12 @@
   overflow: hidden;
   padding: 30px 30px 24px;
   border-radius: 34px;
-  border: 1px solid rgba(82, 112, 122, 0.18);
+  border: 1px solid var(--panel-border);
   background:
-    linear-gradient(rgba(58, 96, 108, 0.12) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(58, 96, 108, 0.08) 1px, transparent 1px),
-    radial-gradient(circle at 18% 12%, rgba(28, 97, 110, 0.12), transparent 24%),
-    linear-gradient(180deg, #061118 0%, #08131a 100%);
+    linear-gradient(var(--panel-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--panel-grid-soft) 1px, transparent 1px),
+    radial-gradient(circle at 18% 12%, rgba(76, 200, 207, 0.08), transparent 24%),
+    linear-gradient(180deg, var(--panel-bg-soft) 0%, var(--panel-bg) 100%);
   background-size: 100% 68px, 68px 100%, 100% 100%, 100% 100%;
   box-shadow: 0 30px 60px rgba(6, 17, 24, 0.28);
 }
@@ -952,19 +952,19 @@
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at 84% 16%, rgba(53, 169, 220, 0.08), transparent 20%),
-    radial-gradient(circle at 10% 90%, rgba(25, 82, 97, 0.1), transparent 18%);
+    radial-gradient(circle at 84% 16%, rgba(76, 200, 207, 0.08), transparent 20%),
+    radial-gradient(circle at 10% 90%, rgba(29, 97, 111, 0.08), transparent 18%);
   pointer-events: none;
 }
 
 .corridor-card .minor-tag {
   background: rgba(255, 255, 255, 0.04);
-  border-color: rgba(121, 151, 160, 0.14);
-  color: rgba(156, 186, 196, 0.92);
+  border-color: rgba(171, 196, 201, 0.12);
+  color: rgba(171, 196, 201, 0.92);
 }
 
 .corridor-card h3 {
-  color: #eff4ef;
+  color: var(--panel-text);
 }
 
 .corridor-map-shell {
@@ -1001,19 +1001,19 @@
 }
 
 .river-path-glow {
-  stroke: rgba(41, 156, 224, 0.2);
+  stroke: rgba(76, 200, 207, 0.18);
   stroke-width: 40;
 }
 
 .river-path-main {
-  stroke: #165d81;
+  stroke: #1b6179;
   stroke-width: 30;
 }
 
 .river-path-highlight {
-  stroke: #42bfff;
+  stroke: #58cde8;
   stroke-width: 11;
-  opacity: 0.92;
+  opacity: 0.88;
 }
 
 .map-stop text,
@@ -1067,7 +1067,7 @@
 }
 
 .stop-name {
-  fill: #ece9e1;
+  fill: #eef2ee;
   font-size: 0.92rem;
   font-weight: 600;
   letter-spacing: 0.02em;
@@ -1091,7 +1091,7 @@
 }
 
 .marker-name {
-  fill: #c8d6db;
+  fill: rgba(200, 214, 219, 0.88);
   font-size: 0.8rem;
   font-weight: 500;
   letter-spacing: 0.04em;
@@ -1143,12 +1143,12 @@
   overflow: hidden;
   margin-top: 18px;
   border-radius: 34px;
-  border: 1px solid rgba(132, 171, 182, 0.12);
+  border: 1px solid var(--panel-border);
   background:
-    linear-gradient(rgba(54, 92, 104, 0.16) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(54, 92, 104, 0.1) 1px, transparent 1px),
-    radial-gradient(circle at top center, rgba(18, 74, 84, 0.16), transparent 24%),
-    linear-gradient(180deg, #071015 0%, #081319 100%);
+    linear-gradient(var(--panel-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--panel-grid-soft) 1px, transparent 1px),
+    radial-gradient(circle at top center, rgba(76, 200, 207, 0.08), transparent 24%),
+    linear-gradient(180deg, var(--panel-bg-soft) 0%, var(--panel-bg) 100%);
   background-size: 100% 74px, 74px 100%, 100% 100%, 100% 100%;
   box-shadow: 0 28px 56px rgba(7, 16, 21, 0.28);
 }
@@ -1158,8 +1158,8 @@
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at 20% 18%, rgba(19, 112, 121, 0.1), transparent 22%),
-    radial-gradient(circle at 84% 8%, rgba(45, 155, 143, 0.08), transparent 18%);
+    radial-gradient(circle at 20% 18%, rgba(76, 200, 207, 0.08), transparent 22%),
+    radial-gradient(circle at 84% 8%, rgba(45, 155, 143, 0.05), transparent 18%);
   pointer-events: none;
 }
 
@@ -1171,14 +1171,14 @@
 }
 
 .partners-panel {
-  border-bottom: 1px solid rgba(132, 171, 182, 0.16);
+  border-bottom: 1px solid rgba(171, 196, 201, 0.12);
 }
 
 .partners-kicker {
   display: block;
   width: fit-content;
   margin: 0 auto 34px;
-  color: rgba(137, 174, 184, 0.88);
+  color: rgba(171, 196, 201, 0.84);
   font-family: var(--mono);
   font-size: 0.82rem;
   letter-spacing: 0.18em;
@@ -1199,14 +1199,14 @@
   min-height: 108px;
   padding: 18px 20px;
   border-radius: 22px;
-  color: rgba(118, 148, 159, 0.9);
+  color: rgba(149, 176, 183, 0.88);
   font-family: var(--mono);
   font-size: 1rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   text-align: center;
-  border: 1px solid rgba(88, 118, 127, 0.06);
-  background: rgba(13, 24, 31, 0.36);
+  border: 1px solid rgba(171, 196, 201, 0.06);
+  background: rgba(255, 255, 255, 0.02);
   transition:
     color 180ms ease,
     border-color 180ms ease,
@@ -1216,13 +1216,13 @@
 
 .partner-chip:hover {
   color: rgba(205, 228, 230, 0.88);
-  border-color: rgba(95, 214, 193, 0.12);
-  background: rgba(95, 214, 193, 0.03);
+  border-color: rgba(171, 196, 201, 0.12);
+  background: rgba(255, 255, 255, 0.04);
   transform: translateY(-2px);
 }
 
 .partner-chip-highlight {
-  color: rgba(162, 212, 221, 0.98);
+  color: var(--panel-accent);
   font-size: 1.12rem;
   font-weight: 600;
 }
@@ -1236,7 +1236,7 @@
 .footer-brand strong {
   display: block;
   margin-bottom: 20px;
-  color: #00e0b8;
+  color: var(--panel-accent);
   font-family: var(--display);
   font-size: clamp(2.3rem, 4vw, 3.4rem);
   letter-spacing: -0.02em;
@@ -1245,7 +1245,7 @@
 .footer-brand p {
   margin: 0;
   max-width: 34ch;
-  color: rgba(174, 198, 202, 0.82);
+  color: var(--panel-muted);
   font-size: 1.02rem;
   line-height: 1.9;
 }
@@ -1263,9 +1263,9 @@
   min-height: 36px;
   padding: 0 14px;
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(162, 194, 201, 0.14);
-  color: rgba(171, 202, 208, 0.9);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(171, 196, 201, 0.12);
+  color: rgba(171, 196, 201, 0.9);
   font-family: var(--mono);
   font-size: 0.82rem;
 }
@@ -1278,7 +1278,7 @@
 
 .footer-column h3 {
   margin: 0 0 22px;
-  color: rgba(210, 223, 225, 0.92);
+  color: var(--panel-text);
   font-family: var(--mono);
   font-size: 1.06rem;
   letter-spacing: 0.14em;
@@ -1292,7 +1292,7 @@
 }
 
 .footer-column li {
-  color: rgba(124, 154, 163, 0.88);
+  color: rgba(149, 176, 183, 0.88);
   font-size: 1.02rem;
   line-height: 2.05;
 }
