@@ -1,0 +1,119 @@
+DROP DATABASE novatech2026;
+CREATE DATABASE novatech2026;
+USE novatech2026;
+
+
+CREATE TABLE mercurio_agua (
+    id_merc INT AUTO_INCREMENT PRIMARY KEY,
+    rio_regiao_merc VARCHAR(150),
+    comunidade_merc VARCHAR(150),
+    municipio_merc VARCHAR(100),
+    estado_merc VARCHAR(50),
+    nivel_merc DECIMAL(10,4),
+    unidade_medida_merc VARCHAR(50),
+    tipo_amostra_merc VARCHAR(100),
+    data_medicao_merc DATE,
+    fonte_merc VARCHAR(150)
+);
+
+
+CREATE TABLE pessoas (
+    id_pes INT AUTO_INCREMENT PRIMARY KEY,
+    nome_pes VARCHAR(150),
+    cpf_pes VARCHAR(14) UNIQUE,
+    data_nascimento_pes DATE,
+    idade_pes INT,
+    sexo_pes VARCHAR(20),
+    gravida_pes BOOLEAN,
+    comunidade_pes VARCHAR(150),
+    nivel_mercurio_sangue_pes DECIMAL(10,4),
+    data_coleta_sangue_pes DATE,
+    CONSTRAINT chk_sxo CHECK (sexo_pes IN ('Masculino', 'Feminino', 'Outro'))
+);
+
+
+CREATE TABLE consumo_peixe (
+    id_peixe INT AUTO_INCREMENT PRIMARY KEY,
+    id_pes INT,
+    frequencia_consumo_peixe VARCHAR(100),
+    tipo_peixe VARCHAR(150),
+    FOREIGN KEY (id_pes) REFERENCES pessoas(id_pes)
+);
+
+
+INSERT INTO mercurio_agua 
+(rio_regiao_merc, comunidade_merc, municipio_merc, estado_merc, nivel_merc, unidade_medida_merc,
+ tipo_amostra_merc, data_medicao_merc, fonte_merc)
+VALUES
+('Rio Tapajós - Médio', 'Comunidade Açaizal', 'Santarém', 'PA', 0.0235, 'mg/L', 'água superficial', '2025-01-15', 'Instituto Ambiental X'),
+('Rio Madeira - Alto', 'Comunidade Nova Esperança', 'Porto Velho', 'RO', 0.0452, 'mg/L', 'água subterrânea', '2025-02-10', 'Secretaria de Meio Ambiente'),
+('Rio Negro - Baixo', 'Comunidade São João', 'Manaus', 'AM', 0.0128, 'mg/L', 'água superficial', '2025-01-28', 'Universidade Federal Y'),
+('Rio Xingu - Médio', 'Comunidade Bela Vista', 'Altamira', 'PA', 0.0671, 'mg/L', 'água superficial', '2025-03-05', 'ONG Saúde & Ambiente');
+
+--------------------------------------------------
+
+
+INSERT INTO pessoas
+(nome_pes, cpf_pes, data_nascimento_pes, idade_pes, sexo_pes, gravida_pes, comunidade_pes, nivel_mercurio_sangue_pes, data_coleta_sangue_pes)
+VALUES
+('Maria Silva', '123.456.789-00', '1995-06-12', 29, 'Feminino', TRUE, 'Comunidade Açaizal', 5.23, '2025-01-20'),
+('João Pereira', '987.654.321-00', '1988-03-22', 36, 'Masculino', FALSE, 'Comunidade Nova Esperança', 3.87, '2025-02-15'),
+('Ana Costa', '456.789.123-00', '2000-11-05', 24, 'Feminino', FALSE, 'Comunidade São João', 6.10, '2025-02-01'),
+('Carlos Souza', '321.654.987-00', '1975-09-30', 49, 'Masculino', FALSE, 'Comunidade Bela Vista', 4.55, '2025-03-10');
+
+--------------------------------------------------
+
+
+INSERT INTO consumo_peixe
+(id_pes, frequencia_consumo_peixe, tipo_peixe)
+VALUES
+(1, 'Diário', 'Tambaqui'),
+(1, 'Semanal', 'Pirarucu'),
+(2, 'Semanal', 'Jaraqui'),
+(3, 'Diário', 'Curimatã'),
+(4, 'Mensal', 'Tucunaré');
+
+
+-- Média de mercúrio na água por comunidade
+SELECT 
+    comunidade_merc,
+    AVG(nivel_merc) AS media_mercurio_agua
+FROM mercurio_agua
+GROUP BY comunidade_merc;
+
+-- Média de mercúrio no sangue por comunidade
+SELECT 
+    comunidade_pes,
+    AVG(nivel_mercurio_sangue_pes) AS media_mercurio_sangue
+FROM pessoas
+GROUP BY comunidade_pes;
+
+-- Média água vs sangue por comunidade
+
+SELECT 
+    m.comunidade_merc,
+    AVG(m.nivel_merc) AS media_agua,
+    AVG(p.nivel_mercurio_sangue_pes) AS media_sangue
+FROM mercurio_agua m
+JOIN pessoas p 
+    ON m.comunidade_merc = p.comunidade_pes
+GROUP BY m.comunidade_merc;
+
+
+-- Relação de pessoa, consumo médio de peixe e nível de mercurio no sangue
+SELECT 
+    p.id_pes,
+    p.nome_pes,
+    AVG(
+        CASE 
+            WHEN c.frequencia_consumo_peixe = 'Diário' THEN 7
+            WHEN c.frequencia_consumo_peixe = 'Semanal' THEN 1
+            WHEN c.frequencia_consumo_peixe = 'Mensal' THEN 0.25
+            ELSE 0
+        END
+    ) AS consumo_medio,
+    p.nivel_mercurio_sangue_pes
+FROM pessoas p
+JOIN consumo_peixe c 
+    ON p.id_pes = c.id_pes
+GROUP BY p.id_pes, p.nome_pes, p.nivel_mercurio_sangue_pes;
