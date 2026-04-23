@@ -1176,14 +1176,32 @@
     transform 180ms ease;
 }
 
+.stop-pulse,
+.marker-pulse {
+  fill: none;
+  stroke: currentColor;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  pointer-events: none;
+}
+
 .stop-ring {
   fill: var(--map-stop-fill);
   stroke-width: 4;
+  transition:
+    transform 220ms ease,
+    filter 220ms ease;
 }
 
-.stop-core {
+.stop-core,
+.marker-core {
   fill: currentColor;
-  transition: transform 180ms ease;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition:
+    transform 180ms ease,
+    filter 180ms ease;
 }
 
 .map-stop-trigger:hover .stop-halo,
@@ -1192,13 +1210,30 @@
   opacity: 0.34;
 }
 
+.map-stop-trigger:hover .stop-ring,
+.map-stop-trigger:focus .stop-ring,
+.map-stop-trigger:focus-visible .stop-ring,
+.map-stop-active .stop-ring,
+.map-stop-active .marker-ring {
+  transform: scale(1.04);
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.12));
+}
+
 .map-stop-trigger:hover .stop-core,
 .map-stop-trigger:focus .stop-core,
 .map-stop-trigger:focus-visible .stop-core,
+.map-stop-active .stop-core,
 .map-stop-trigger:hover .marker-core,
 .map-stop-trigger:focus .marker-core,
-.map-stop-trigger:focus-visible .marker-core {
+.map-stop-trigger:focus-visible .marker-core,
+.map-stop-active .marker-core {
   transform: scale(1.08);
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.16));
+}
+
+.map-stop-active .stop-pulse,
+.map-stop-active .marker-pulse {
+  animation: map-point-pulse 1.65s ease-out infinite;
 }
 
 .map-stop-critical {
@@ -1241,10 +1276,9 @@
 .marker-ring {
   fill: var(--map-stop-fill);
   stroke-width: 2.5;
-}
-
-.marker-core {
-  fill: currentColor;
+  transition:
+    transform 220ms ease,
+    filter 220ms ease;
 }
 
 .marker-name {
@@ -1311,6 +1345,7 @@
 }
 
 .map-tooltip {
+  position: relative;
   display: grid;
   gap: 8px;
   min-height: 100%;
@@ -1320,6 +1355,38 @@
   background: rgba(7, 18, 23, 0.94);
   box-shadow: 0 18px 32px rgba(0, 0, 0, 0.24);
   color: #eff8f6;
+  backdrop-filter: blur(12px);
+  animation: map-tooltip-rise 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.map-tooltip::after {
+  content: '';
+  position: absolute;
+  left: 22px;
+  width: 16px;
+  height: 16px;
+  background: rgba(7, 18, 23, 0.94);
+  transform: rotate(45deg);
+}
+
+.map-tooltip-above {
+  transform-origin: 22px calc(100% - 10px);
+}
+
+.map-tooltip-above::after {
+  bottom: -8px;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.map-tooltip-below {
+  transform-origin: 22px 10px;
+}
+
+.map-tooltip-below::after {
+  top: -8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .map-tooltip-level {
@@ -1359,6 +1426,36 @@
 .map-tooltip-critical {
   color: #ff9f91;
   background: rgba(255, 107, 99, 0.16);
+}
+
+@keyframes map-point-pulse {
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+    stroke-width: 8;
+  }
+
+  20% {
+    opacity: 0.32;
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.95);
+    stroke-width: 1;
+  }
+}
+
+@keyframes map-tooltip-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .evidence-grid,

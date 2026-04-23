@@ -435,6 +435,7 @@ function getMapTooltipPosition(point: MapTooltipPoint) {
   const height = 108
   let x = point.x + 22
   let y = point.y - height - 18
+  let placement: 'above' | 'below' = 'above'
 
   if (x + width > 1176) {
     x = point.x - width - 22
@@ -442,9 +443,10 @@ function getMapTooltipPosition(point: MapTooltipPoint) {
 
   if (y < 24) {
     y = point.y + 24
+    placement = 'below'
   }
 
-  return { x, y, width, height }
+  return { x, y, width, height, placement }
 }
 
 function App() {
@@ -862,7 +864,9 @@ function App() {
                 {routeStops.map((stop) => (
                   <g
                     key={stop.name}
-                    className={`map-stop map-stop-${stop.risk} map-stop-trigger`}
+                    className={`map-stop map-stop-${stop.risk} map-stop-trigger${
+                      activeMapPoint?.name === stop.name ? ' map-stop-active' : ''
+                    }`}
                     onMouseEnter={() => setActiveMapPoint(stop)}
                     onMouseLeave={() => setActiveMapPoint(null)}
                     onFocus={() => setActiveMapPoint(stop)}
@@ -872,6 +876,7 @@ function App() {
                     aria-label={`${stop.name}: ${riskLabel[stop.risk]}`}
                   >
                     <circle className="stop-halo" cx={stop.x} cy={stop.y} r="26" />
+                    <circle className="stop-pulse" cx={stop.x} cy={stop.y} r="16" />
                     <circle className="stop-ring" cx={stop.x} cy={stop.y} r="16" />
                     <circle className="stop-core" cx={stop.x} cy={stop.y} r="8" />
                     <text
@@ -888,7 +893,9 @@ function App() {
                 {territoryMarkers.map((marker) => (
                   <g
                     key={marker.name}
-                    className={`map-stop map-stop-${marker.risk} map-stop-trigger`}
+                    className={`map-stop map-stop-${marker.risk} map-stop-trigger${
+                      activeMapPoint?.name === marker.name ? ' map-stop-active' : ''
+                    }`}
                     onMouseEnter={() => setActiveMapPoint(marker)}
                     onMouseLeave={() => setActiveMapPoint(null)}
                     onFocus={() => setActiveMapPoint(marker)}
@@ -897,6 +904,7 @@ function App() {
                     role="button"
                     aria-label={`${marker.name}: ${riskLabel[marker.risk]}`}
                   >
+                    <circle className="marker-pulse" cx={marker.x} cy={marker.y} r="12" />
                     <circle className="marker-ring" cx={marker.x} cy={marker.y} r="12" />
                     <circle className="marker-core" cx={marker.x} cy={marker.y} r="5" />
                     <text
@@ -919,7 +927,13 @@ function App() {
                     className="map-tooltip-shell"
                     aria-hidden="true"
                   >
-                    <div className="map-tooltip">
+                    <div
+                      className={`map-tooltip ${
+                        activeTooltipPosition.placement === 'below'
+                          ? 'map-tooltip-below'
+                          : 'map-tooltip-above'
+                      }`}
+                    >
                       <span className={`map-tooltip-level map-tooltip-${activeMapPoint.risk}`}>
                         Situacao {riskLabel[activeMapPoint.risk]}
                       </span>
