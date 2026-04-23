@@ -7,10 +7,8 @@ import {
   BookOpen,
   FlaskConical,
   MapPinned,
-  Radar,
   ShieldAlert,
   Users,
-  Waves,
 } from 'lucide-react'
 import './App.css'
 
@@ -64,18 +62,11 @@ type Evidence = {
   summary: string
 }
 
-type Module = {
-  title: string
-  description: string
-  icon: LucideIcon
-  items: string[]
-}
-
 const navItems = [
-  { href: '#contexto', label: 'Contexto' },
+  { href: '#alertas', label: 'Alertas' },
+  { href: '#orientacoes', label: 'Orientacoes' },
   { href: '#painel', label: 'Painel' },
   { href: '#territorio', label: 'Territorio' },
-  { href: '#ciencia', label: 'Ciencia' },
 ]
 
 const stats: Stat[] = [
@@ -134,36 +125,36 @@ const signals: Signal[] = [
 
 const layers: Layer[] = [
   {
-    title: 'Observacao ambiental',
+    title: 'Se voce mora ou trabalha na regiao',
     description:
-      'Coleta e leitura de agua, sedimento e solo ripario para entender pressao ambiental e sazonalidade.',
-    icon: Waves,
+      'Acompanhe quando o risco aumenta na sua comunidade e quais cuidados ajudam a reduzir a exposicao.',
+    icon: Users,
     bullets: [
-      'Campanhas por trecho e por periodo de seca ou cheia',
-      'Historico de mercurio em agua e sedimento',
-      'Pontos fixos para comparacao ao longo do tempo',
+      'Fique atento aos alertas locais sobre agua, pesca e seca extrema',
+      'Procure orientacao na unidade de saude se houver sintomas neurologicos ou suspeita de exposicao',
+      'Gestantes, criancas e familias com alto consumo de peixe precisam de atencao especial',
     ],
   },
   {
-    title: 'Vigilancia clinica',
+    title: 'Se voce atende pacientes',
     description:
-      'Biomarcadores, grupos sensiveis e registro de sintomas para aproximar a ciencia do cuidado.',
+      'Tenha apoio para triagem, vigilancia e encaminhamento com leitura territorial e contexto de exposicao.',
     icon: FlaskConical,
     bullets: [
-      'Hg capilar, urinario e outros biomarcadores',
-      'Priorizacao de gestantes, criancas e comunidades isoladas',
-      'Triagem e acompanhamento em articulacao com a rede local',
+      'Considere historico alimentar, comunidade de origem e grupos mais sensiveis',
+      'Priorize gestantes, criancas e populacoes com alta dependencia de pescado',
+      'Use a leitura do territorio para apoio ao acompanhamento e a vigilancia em saude',
     ],
   },
   {
-    title: 'Inteligencia territorial',
+    title: 'Se voce atua em campo',
     description:
-      'Cruza exposicao ambiental, dieta, vulnerabilidade e acesso a servicos para gerar prioridade real.',
-    icon: Radar,
+      'Visualize onde a urgencia aumenta e quais comunidades merecem resposta mais rapida.',
+    icon: BellRing,
     bullets: [
-      'Indice de risco por comunidade',
-      'Watchlist para leitura rapida do territorio',
-      'Alertas para apoiar resposta de campo e saude publica',
+      'Priorize comunidades com seca extrema, isolamento e maior exposicao alimentar',
+      'Cruze acesso a agua, consumo local e distancia da rede assistencial',
+      'Use o painel para planejar visita, busca ativa e orientacao comunitaria',
     ],
   },
 ]
@@ -288,42 +279,6 @@ const evidenceBase: Evidence[] = [
   },
 ]
 
-const modules: Module[] = [
-  {
-    title: 'Coleta em campo',
-    description:
-      'A camada que reune campanhas ambientais, pontos de amostragem e historico por trecho.',
-    icon: Waves,
-    items: [
-      'Agua superficial, sedimento e solo ripario',
-      'Leitura por campanha e por sazonalidade',
-      'Rastro temporal para comparacao de risco',
-    ],
-  },
-  {
-    title: 'Leitura de risco',
-    description:
-      'A parte do sistema que transforma variaveis dispersas em prioridade objetiva por comunidade.',
-    icon: BellRing,
-    items: [
-      'Indice por peso de exposicao e vulnerabilidade',
-      'Watchlist de comunidades mais sensiveis',
-      'Historico de sinais que acenderam o alerta',
-    ],
-  },
-  {
-    title: 'Resposta em saude',
-    description:
-      'O modulo pensado para ligar vigilancia, cuidado e acao no territorio.',
-    icon: Users,
-    items: [
-      'Triagem de grupos prioritarios',
-      'Acompanhamento de biomarcadores humanos',
-      'Encaminhamento para equipes locais e teleapoio',
-    ],
-  },
-]
-
 const institutionalPartners = [
   'FIOCRUZ AMAZONIA',
   'INPA',
@@ -337,12 +292,12 @@ const institutionalPartners = [
 
 const footerColumns = [
   {
-    title: 'Sistema',
-    links: ['Como funciona', 'Cruzamento de dados', 'Mapa de risco', 'Comunidades'],
+    title: 'Acesso rapido',
+    links: ['Como funciona', 'Mapa de risco', 'Comunidades', 'Parceiros'],
   },
   {
-    title: 'Ciencia',
-    links: ['Base cientifica', 'Pesquisadores', 'O problema', 'Parceiros'],
+    title: 'Informacoes',
+    links: ['Base cientifica', 'O problema', 'Risco no territorio', 'Orientacoes'],
   },
 ]
 
@@ -390,10 +345,9 @@ function App() {
               O Rio Negro precisa de uma sala de situacao para o mercurio.
             </h1>
             <p className="hero-summary">
-              O site foi reorganizado como plataforma de observacao: agua, peixe,
-              biomarcadores humanos e vulnerabilidade territorial aparecem juntos
-              para mostrar onde o risco cresce primeiro e onde a resposta precisa
-              chegar antes.
+              Este portal reune alertas, orientacoes e leitura territorial para
+              apoiar a populacao, profissionais de saude e agentes de campo no
+              acompanhamento do risco por mercurio ao longo do Rio Negro.
             </p>
 
             <div className="hero-actions">
@@ -461,35 +415,32 @@ function App() {
           ))}
         </section>
 
-        <section className="section" id="contexto">
+        <section className="section" id="alertas">
           <div className="section-intro">
-            <span className="section-kicker">Por que existe</span>
-            <h2>Sem juntar territorio e saude, o risco fica invisivel.</h2>
+            <span className="section-kicker">Alertas do momento</span>
+            <h2>O que esta em observacao agora no territorio.</h2>
             <p>
-              O projeto faz sentido quando a leitura ambiental deixa de ser uma
-              planilha isolada e passa a conversar com dieta, distancia, seca
-              extrema e resposta assistencial.
+              Este painel resume os sinais que pedem mais atencao no Rio Negro
+              e ajuda a identificar onde a vigilancia precisa ser reforcada.
             </p>
           </div>
 
           <div className="context-layout">
             <article className="context-story">
               <p>
-                A presenca de mercurio na Amazonia nao e apenas um problema de
-                laboratorio. Ela entra no cotidiano das comunidades pela agua,
-                pela cadeia trofica e pela dependencia do peixe como principal
-                fonte proteica.
+                Os alertas atuais combinam seca extrema, qualidade da agua,
+                dependencia de pescado e dificuldade de acesso a servicos de
+                saude em parte das comunidades monitoradas.
               </p>
               <p>
-                Em alguns grupos, o pescado responde por quase toda a dieta. Por
-                isso, quando o sistema cruza mercurio em agua, especies consumidas
-                e grupos mais sensiveis, ele deixa de ser um painel tecnico e vira
-                ferramenta de decisao.
+                Gestantes, criancas, familias com alto consumo de peixe e
+                comunidades isoladas merecem acompanhamento mais atento,
+                especialmente durante periodos de seca severa.
               </p>
 
               <blockquote className="context-quote">
-                Sem integrar agua, peixe, biomarcadores e distancia da rede de
-                saude, a prioridade chega tarde demais.
+                Em caso de alerta local, mudanca na agua consumida ou sintomas
+                neurologicos, procure orientacao da equipe de saude.
               </blockquote>
             </article>
 
@@ -513,14 +464,14 @@ function App() {
           </div>
         </section>
 
-        <section className="section" id="sistema">
+        <section className="section" id="orientacoes">
           <div className="section-intro">
-            <span className="section-kicker">Camadas do sistema</span>
-            <h2>O site agora fala a lingua do produto, nao a lingua do template.</h2>
+            <span className="section-kicker">Orientacoes rapidas</span>
+            <h2>Informacao util para quem vive, atende e atua no territorio.</h2>
             <p>
-              Em vez de uma landing generica, a estrutura foi organizada em tres
-              blocos que refletem a logica real do projeto: observar, interpretar
-              e agir.
+              Esta parte foi pensada para uso direto: apoio para a populacao,
+              para profissionais de saude e para agentes que precisam agir no
+              territorio.
             </p>
           </div>
 
@@ -552,31 +503,26 @@ function App() {
         <section className="section" id="painel">
           <div className="section-intro">
             <span className="section-kicker">Painel de risco</span>
-            <h2>O indice vira leitura clara, e nao formula escondida.</h2>
+            <h2>Comunidades em observacao e sinais que elevam o risco.</h2>
             <p>
-              O painel mostra como o risco por comunidade e construido e onde a
-              equipe deve olhar primeiro. Isso preserva o conteudo importante e
-              melhora muito a leitura do site.
+              O objetivo aqui e ajudar a leitura do territorio: quais sinais
+              aumentam a preocupacao e quais comunidades pedem resposta mais
+              rapida.
             </p>
           </div>
 
           <div className="panel-layout">
             <article className="risk-model">
               <div className="card-heading">
-                <span className="minor-tag">IRC v1.0</span>
-                <h3>Composicao do indice de risco</h3>
+                <span className="minor-tag">Sinais acompanhados</span>
+                <h3>O que aumenta a atencao em cada comunidade</h3>
               </div>
 
               <div className="formula-line" aria-hidden="true">
-                <span>IRC</span>
-                <span>=</span>
-                <span>agua</span>
-                <span>+</span>
-                <span>peixe</span>
-                <span>+</span>
-                <span>consumo</span>
-                <span>+</span>
-                <span>territorio</span>
+                <span>Qualidade da agua</span>
+                <span>Peixes consumidos</span>
+                <span>Frequencia de consumo</span>
+                <span>Acesso a saude</span>
               </div>
 
               <div className="factor-stack">
@@ -611,8 +557,8 @@ function App() {
 
             <article className="priority-card">
               <div className="card-heading">
-                <span className="minor-tag">Watchlist territorial</span>
-                <h3>Comunidades que concentram urgencia</h3>
+                <span className="minor-tag">Monitoramento territorial</span>
+                <h3>Comunidades que pedem mais atencao</h3>
               </div>
 
               <div className="priority-list">
@@ -696,8 +642,8 @@ function App() {
             <span className="section-kicker">Base cientifica</span>
             <h2>Informacao forte continua no centro do site.</h2>
             <p>
-              As referencias continuam presentes, mas agora entram como parte da
-              narrativa do observatorio e nao como bloco solto no fim da pagina.
+              As referencias abaixo ajudam profissionais e gestores a entender o
+              contexto ambiental e sanitario por tras dos alertas.
             </p>
           </div>
 
@@ -712,40 +658,6 @@ function App() {
                 <p>{item.summary}</p>
               </article>
             ))}
-          </div>
-        </section>
-
-        <section className="section section-modules" id="modulos">
-          <div className="section-intro">
-            <span className="section-kicker">Como o ecossistema evolui</span>
-            <h2>Coleta, leitura e resposta continuam claros no desenho do site.</h2>
-            <p>
-              Essas frentes mantem a proposta coerente com o projeto e deixam a
-              experiencia pronta para crescer depois sem perder direcao.
-            </p>
-          </div>
-
-          <div className="module-grid">
-            {modules.map((module) => {
-              const Icon = module.icon
-
-              return (
-                <article key={module.title} className="module-card">
-                  <div className="module-head">
-                    <div className="module-icon">
-                      <Icon size={22} />
-                    </div>
-                    <h3>{module.title}</h3>
-                  </div>
-                  <p>{module.description}</p>
-                  <ul className="module-list">
-                    {module.items.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </article>
-              )
-            })}
           </div>
         </section>
 
