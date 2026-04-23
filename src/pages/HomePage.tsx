@@ -1,15 +1,14 @@
 import {
   AlertTriangle,
   ArrowRight,
-  BellRing,
   BookOpen,
-  FlaskConical,
-  Users,
+  Database,
+  Map,
+  ShieldAlert,
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { RiverMapPanel } from '../components/RiverMapPanel'
 import {
-  audienceLayers,
   priorityCommunities,
   quickAccessCards,
   riskLabel,
@@ -19,15 +18,44 @@ import {
   stats,
 } from '../siteData'
 
-const audienceIcons = {
-  users: Users,
-  flask: FlaskConical,
-  bell: BellRing,
-}
+const homeRoutes = [
+  {
+    title: 'Contexto do problema',
+    description:
+      'Explica contaminacao, seca extrema, exposicao alimentar e a logica geral do observatorio.',
+    to: '/contexto',
+    icon: ShieldAlert,
+    tag: 'Contexto',
+  },
+  {
+    title: 'Painel tecnico',
+    description:
+      'Mostra pesos, variaveis, metodologia do indice de risco e leitura de resposta por territorio.',
+    to: '/painel',
+    icon: Database,
+    tag: 'Painel',
+  },
+  {
+    title: 'Comunidades',
+    description:
+      'Reune a tabela consolidada do projeto original com filtros e prioridades por trecho monitorado.',
+    to: '/comunidades',
+    icon: Map,
+    tag: 'Territorio',
+  },
+  {
+    title: 'Base cientifica',
+    description:
+      'Concentra os 11 estudos, referencias tecnicas e a rede de pesquisadores parceiros.',
+    to: '/ciencia',
+    icon: BookOpen,
+    tag: 'Ciencia',
+  },
+]
 
 export function HomePage() {
   const heroWatch = priorityCommunities.slice(0, 3)
-  const featuredStudies = scienceStudies.slice(0, 3)
+  const featuredStudies = scienceStudies.slice(0, 2)
 
   return (
     <>
@@ -169,37 +197,35 @@ export function HomePage() {
         </div>
       </section>
 
-      <section className="section" id="orientacoes">
+      <section className="section" id="paginas">
         <div className="section-intro">
-          <span className="section-kicker">Orientacoes rapidas</span>
-          <h2>O que observar e como usar esta informacao no dia a dia.</h2>
+          <span className="section-kicker">Acesso por pagina</span>
+          <h2>O site agora esta melhor distribuido em areas proprias.</h2>
           <p>
-            Esta parte foi pensada para uso direto: apoio para a populacao,
-            para profissionais de saude e para agentes que precisam agir no
-            territorio.
+            A home virou um resumo do que importa agora. Os blocos abaixo levam
+            para as paginas onde cada assunto ficou organizado com mais calma.
           </p>
         </div>
 
-        <div className="layer-grid">
-          {audienceLayers.map((layer, index) => {
-            const Icon = audienceIcons[layer.icon]
+        <div className="home-route-grid">
+          {homeRoutes.map((item) => {
+            const Icon = item.icon
 
             return (
-              <article key={layer.title} className="layer-card">
-                <div className="layer-head">
-                  <span className="layer-number">0{index + 1}</span>
-                  <div className="layer-icon">
+              <Link key={item.title} className="home-route-card" to={item.to}>
+                <div className="home-route-head">
+                  <span className="home-route-tag">{item.tag}</span>
+                  <div className="home-route-icon">
                     <Icon size={22} />
                   </div>
                 </div>
-                <h3>{layer.title}</h3>
-                <p>{layer.description}</p>
-                <ul className="layer-list">
-                  {layer.bullets.map((bullet) => (
-                    <li key={bullet}>{bullet}</li>
-                  ))}
-                </ul>
-              </article>
+                <h3>{item.title}</h3>
+                <p>{item.description}</p>
+                <span className="home-route-link">
+                  Abrir pagina
+                  <ArrowRight size={16} />
+                </span>
+              </Link>
             )
           })}
         </div>
@@ -221,12 +247,11 @@ export function HomePage() {
 
       <section className="section" id="ciencia">
         <div className="section-intro">
-          <span className="section-kicker">Base cientifica</span>
-          <h2>Referencias para apoio tecnico e tomada de decisao.</h2>
+          <span className="section-kicker">Destaques cientificos</span>
+          <h2>Dois registros-chave na home, com o acervo completo em outra pagina.</h2>
           <p>
-            O site atual usa a base consolidada do projeto original. Aqui ficam
-            algumas referencias em destaque, e a colecao completa esta na pagina
-            de ciencia.
+            Assim a tela inicial continua leve, mas sem perder o contexto
+            tecnico mais importante.
           </p>
         </div>
 

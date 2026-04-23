@@ -843,17 +843,27 @@
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
+.home-route-grid,
 .problem-grid,
 .method-grid {
   display: grid;
-  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
   gap: 18px;
+}
+
+.home-route-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.problem-grid,
+.method-grid {
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
 }
 
 .problem-story,
 .panel-note-card,
 .method-axis,
 .monitor-card,
+.home-route-card,
 .community-highlight-card,
 .study-card,
 .researcher-card {
@@ -861,6 +871,80 @@
   border: 1px solid var(--line);
   background: var(--surface-glass);
   box-shadow: var(--shadow-soft);
+}
+
+.home-route-card {
+  display: grid;
+  gap: 14px;
+  padding: 22px;
+  color: inherit;
+  text-decoration: none;
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    background 180ms ease;
+}
+
+.home-route-card:hover,
+.home-route-card:focus-visible {
+  transform: translateY(-2px);
+  border-color: var(--line-strong);
+  background: var(--surface);
+}
+
+.home-route-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.home-route-tag {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: var(--surface-tint);
+  color: var(--river);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.home-route-icon {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 16px;
+  background: var(--surface-tint-strong);
+  color: var(--river);
+  flex-shrink: 0;
+}
+
+.home-route-card h3 {
+  margin: 0;
+  color: var(--ink);
+}
+
+.home-route-card p {
+  margin: 0;
+  color: var(--muted-strong);
+  line-height: 1.65;
+}
+
+.home-route-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--river);
+  font-family: var(--mono);
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .problem-story {
@@ -2351,6 +2435,7 @@
   .module-grid,
   .evidence-grid,
   .monitor-grid,
+  .home-route-grid,
   .community-highlight-grid,
   .scale-guide-grid,
   .method-grid {
@@ -2389,6 +2474,7 @@
   .module-grid,
   .evidence-grid,
   .monitor-grid,
+  .home-route-grid,
   .community-highlight-grid,
   .scale-guide-grid,
   .method-grid,
