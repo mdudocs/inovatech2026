@@ -14,9 +14,9 @@ import {
   Users,
 } from 'lucide-react'
 import './App.css'
+import { applyTheme, resolveInitialTheme } from './theme'
 
 type RiskTone = 'critical' | 'high' | 'medium'
-type ThemeMode = 'light' | 'dark'
 
 type Stat = {
   label: string
@@ -388,23 +388,12 @@ const riskLabel: Record<RiskTone, string> = {
 }
 
 function App() {
-  const [theme, setTheme] = useState<ThemeMode>(() => {
-    if (typeof window === 'undefined') {
-      return 'light'
-    }
-
-    const storedTheme = window.localStorage.getItem('inovatech-theme')
-
-    return storedTheme === 'light' || storedTheme === 'dark'
-      ? storedTheme
-      : 'light'
-  })
+  const [theme, setTheme] = useState(resolveInitialTheme)
   const heroWatch = communities.slice(0, 3)
   const nextThemeLabel = theme === 'light' ? 'Modo escuro' : 'Modo claro'
 
   useEffect(() => {
-    document.documentElement.dataset.theme = theme
-    window.localStorage.setItem('inovatech-theme', theme)
+    applyTheme(theme)
   }, [theme])
 
   return (
