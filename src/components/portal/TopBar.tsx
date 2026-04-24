@@ -27,11 +27,11 @@ export function TopBar({
         </span>
       </Link>
 
-      <nav className="topnav" aria-label="Principal">
-        <NavLink to="/">Inicio</NavLink>
-        <NavLink to="/login">Entrar</NavLink>
-        {session ? <NavLink to={roleMeta[session.user.role].route}>Meu portal</NavLink> : null}
-      </nav>
+      {session ? (
+        <nav className="topnav" aria-label="Principal">
+          <NavLink to={roleMeta[session.user.role].route}>Meu portal</NavLink>
+        </nav>
+      ) : null}
 
       <div className="topbar-actions">
         <button

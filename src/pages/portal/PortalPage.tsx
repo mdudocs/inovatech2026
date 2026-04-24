@@ -65,6 +65,10 @@ export function PortalPage({ session }: { session: AuthSession | null }) {
     return <Navigate to="/login" replace />
   }
 
+  if (session.user.role === 'admin') {
+    return <Navigate to={roleMeta.admin.route} replace />
+  }
+
   if (!isUserRole(role)) {
     return <Navigate to={roleMeta[session.user.role].route} replace />
   }

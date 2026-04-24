@@ -1,4 +1,3 @@
-import { AdminView } from './AdminView'
 import type { PortalDashboard } from '../../portalTypes'
 import { CollectorView } from './CollectorView'
 import { DoctorView } from './DoctorView'
@@ -14,7 +13,7 @@ export function DashboardBody({ dashboard }: { dashboard: PortalDashboard }) {
   }
 
   if (dashboard.kind === 'admin') {
-    return <AdminView data={dashboard} />
+    return null
   }
 
   return <CollectorView data={dashboard} />

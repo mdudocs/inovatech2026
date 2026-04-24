@@ -2,6 +2,7 @@ export type ThemeTone = 'teal' | 'gold' | 'coral' | 'slate'
 export type UserRole = 'population' | 'doctor' | 'collector' | 'admin'
 export type SourceMode = 'mock' | 'api'
 export type AlertLevel = 'critical' | 'attention' | 'stable'
+export type AdminSection = 'visao-geral' | 'usuarios' | 'banco'
 
 export type RoleMeta = {
   label: string
@@ -37,6 +38,7 @@ export type LoginPayload = {
   role: UserRole
   identifier: string
   password: string
+  accessKey?: string
 }
 
 export type MetricCard = {
@@ -54,6 +56,7 @@ export type AlertItem = {
   updatedAt: string
   description: string
   action: string
+  href?: string
 }
 
 export type AppointmentItem = {
@@ -141,23 +144,69 @@ export type AdminTableSummary = {
 }
 
 export type AdminUserSummary = {
+  id: string
   name: string
   role: string
   identifier: string
   territory: string
   status: string
+  active: boolean
 }
 
-export type AdminDashboard = {
-  kind: 'admin'
+export type AdminOverviewDashboard = {
+  headline: string
+  summary: string
+  stats: MetricCard[]
+  alerts: AlertItem[]
+  activity: string[]
+  changes: DatabaseChangeItem[]
+}
+
+export type AdminUsersDashboard = {
+  headline: string
+  summary: string
+  stats: MetricCard[]
+  users: AdminUserSummary[]
+}
+
+export type CreateAdminUserPayload = {
+  name: string
+  role: UserRole
+  identifier: string
+  password: string
+  territory: string
+}
+
+export type AdminDatabaseHealth = {
+  label: string
+  status: string
+  detail: string
+  tone: ThemeTone
+}
+
+export type DatabaseChangeItem = {
+  id: string
+  table: string
+  action: 'INSERT' | 'UPDATE' | 'DELETE'
+  recordId: string
+  summary: string
+  changedAt: string
+  href?: string
+}
+
+export type AdminDatabaseDashboard = {
   headline: string
   summary: string
   stats: MetricCard[]
   alerts: AlertItem[]
   tables: AdminTableSummary[]
-  users: AdminUserSummary[]
-  activity: string[]
+  health: AdminDatabaseHealth[]
+  changes: DatabaseChangeItem[]
 }
+
+export type AdminDashboard = {
+  kind: 'admin'
+} & AdminOverviewDashboard
 
 export type DashboardByRole = {
   population: PopulationDashboard
