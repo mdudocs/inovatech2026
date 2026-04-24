@@ -14,6 +14,7 @@ export function LoginPage({
 }) {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
+  const visibleRoles = (Object.keys(roleMeta) as UserRole[]).filter((role) => role !== 'admin')
   const initialRoleParam = searchParams.get('role') ?? undefined
   const [selectedRole, setSelectedRole] = useState<UserRole>(
     isUserRole(initialRoleParam) ? initialRoleParam : 'population',
@@ -55,6 +56,11 @@ export function LoginPage({
     <div className="page-stack">
       <section className="login-layout">
         <div className="simple-card">
+          <div className="login-brand">
+            <div className="login-logo">🌊</div>
+            <h2 className="login-title">Inovatech 2026</h2>
+            <p className="login-subtitle">Sistema de Monitoramento Ambiental</p>
+          </div>
           <span className="section-badge">Entrar</span>
           <h1 className="section-title">{roleMeta[selectedRole].label}</h1>
           <p className="section-text">{roleMeta[selectedRole].description}</p>
@@ -73,10 +79,10 @@ export function LoginPage({
           </div>
         </div>
 
-        <aside className="simple-card">
+        <aside className="simple-card login-form-card">
           <form className="login-form" onSubmit={handleSubmit}>
             <div className="role-switch" role="tablist" aria-label="Perfil de acesso">
-              {(Object.keys(roleMeta) as UserRole[]).map((role) => {
+              {visibleRoles.map((role) => {
                 const Icon = roleIcons[role]
                 const isActive = selectedRole === role
 
@@ -121,6 +127,12 @@ export function LoginPage({
               {pending ? 'Entrando...' : `Entrar como ${roleMeta[selectedRole].shortLabel}`}
             </button>
           </form>
+
+          <div className="login-footer">
+            <p>
+              Precisa de ajuda? <a href="#contact">Entre em contato</a>
+            </p>
+          </div>
         </aside>
       </section>
     </div>

@@ -28,14 +28,6 @@ export const landingCards: Array<{
       'Coletas prioritarias',
     ],
   },
-  {
-    role: 'admin',
-    points: [
-      'Usuarios cadastrados',
-      'Tabelas do banco',
-      'Visao geral do sistema',
-    ],
-  },
 ]
 
 export const homeSteps = [

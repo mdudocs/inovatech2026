@@ -1,4 +1,8 @@
 import type {
+  AdminDatabaseHealth,
+  AdminTableSummary,
+  AdminUserSummary,
+  DatabaseChangeItem,
   DashboardByRole,
   DemoAccount,
   RoleMeta,
@@ -36,7 +40,7 @@ export const roleMeta: Record<UserRole, RoleMeta> = {
     credentialLabel: 'Usuario administrativo',
     description:
       'Painel para acompanhar usuarios, tabelas e o estado geral do banco.',
-    route: '/portal/admin',
+    route: '/portal/admin/visao-geral',
   },
 }
 
@@ -449,58 +453,7 @@ export const dashboardMocks: DashboardByRole = {
         description:
           'A conexao principal com o banco esta ativa e respondendo normalmente.',
         action: 'Monitorar o crescimento de usuarios e tabelas do sistema.',
-      },
-    ],
-    tables: [
-      {
-        table: 'usuarios',
-        rows: '4',
-        detail: 'Tabela principal de acesso ao sistema.',
-      },
-      {
-        table: 'comunidades',
-        rows: '7',
-        detail: 'Comunidades e municipios cadastrados no banco.',
-      },
-      {
-        table: 'pesquisadores',
-        rows: '5',
-        detail: 'Referencias de pesquisadores salvas no sistema.',
-      },
-      {
-        table: 'registros_mercuario',
-        rows: '4',
-        detail: 'Registros relacionados ao mercurio no banco.',
-      },
-    ],
-    users: [
-      {
-        name: 'Maria do Carmo',
-        role: 'population',
-        identifier: '111.111.111-11',
-        territory: 'Comunidade Sao Tome - Baixo Rio Negro',
-        status: 'Ativo',
-      },
-      {
-        name: 'Dra. Helena Nascimento',
-        role: 'doctor',
-        identifier: 'CRM-AM 10234',
-        territory: 'UBS Fluvial Rio Negro',
-        status: 'Ativo',
-      },
-      {
-        name: 'Joao Batista',
-        role: 'collector',
-        identifier: 'AGT-204',
-        territory: 'Equipe de campo - Trecho Manaus / Barcelos',
-        status: 'Ativo',
-      },
-      {
-        name: 'Administrador do Sistema',
-        role: 'admin',
-        identifier: 'admin',
-        territory: 'Painel administrativo',
-        status: 'Ativo',
+        href: '/portal/admin/banco',
       },
     ],
     activity: [
@@ -508,5 +461,129 @@ export const dashboardMocks: DashboardByRole = {
       'Verificar crescimento das tabelas principais do banco.',
       'Monitorar se o painel e a base continuam respondendo normalmente.',
     ],
+    changes: [
+      {
+        id: 'chg-1',
+        table: 'usuarios',
+        action: 'UPDATE',
+        recordId: 'u-doc-01',
+        summary: 'Usuario Dra. Helena Nascimento teve revisao recente de acesso.',
+        changedAt: '24/04/2026 16:20',
+        href: '/portal/admin/usuarios',
+      },
+      {
+        id: 'chg-2',
+        table: 'registros_mercuario',
+        action: 'INSERT',
+        recordId: 'R-2026-004',
+        summary: 'Novo registro de mercurio foi incluido na base.',
+        changedAt: '24/04/2026 15:54',
+        href: '/portal/admin/banco',
+      },
+    ],
   },
 }
+
+export const mockAdminTables: AdminTableSummary[] = [
+  {
+    table: 'usuarios',
+    rows: '4',
+    detail: 'Tabela principal de acesso ao sistema.',
+  },
+  {
+    table: 'comunidades',
+    rows: '7',
+    detail: 'Comunidades e municipios cadastrados no banco.',
+  },
+  {
+    table: 'pesquisadores',
+    rows: '5',
+    detail: 'Referencias de pesquisadores salvas no sistema.',
+  },
+  {
+    table: 'registros_mercuario',
+    rows: '4',
+    detail: 'Registros relacionados ao mercurio no banco.',
+  },
+]
+
+export const mockAdminUsers: AdminUserSummary[] = [
+  {
+    id: 'u-pop-01',
+    name: 'Maria do Carmo',
+    role: 'population',
+    identifier: '111.111.111-11',
+    territory: 'Comunidade Sao Tome - Baixo Rio Negro',
+    status: 'Ativo',
+    active: true,
+  },
+  {
+    id: 'u-doc-01',
+    name: 'Dra. Helena Nascimento',
+    role: 'doctor',
+    identifier: 'CRM-AM 10234',
+    territory: 'UBS Fluvial Rio Negro',
+    status: 'Ativo',
+    active: true,
+  },
+  {
+    id: 'u-col-01',
+    name: 'Joao Batista',
+    role: 'collector',
+    identifier: 'AGT-204',
+    territory: 'Equipe de campo - Trecho Manaus / Barcelos',
+    status: 'Ativo',
+    active: true,
+  },
+  {
+    id: 'u-admin-01',
+    name: 'Administrador do Sistema',
+    role: 'admin',
+    identifier: 'admin',
+    territory: 'Painel administrativo',
+    status: 'Ativo',
+    active: true,
+  },
+]
+
+export const mockAdminHealth: AdminDatabaseHealth[] = [
+  {
+    label: 'API',
+    status: 'Online',
+    detail: 'Servico administrativo respondendo normalmente.',
+    tone: 'teal',
+  },
+  {
+    label: 'MySQL',
+    status: 'Online',
+    detail: 'Conexao principal ativa para leitura e atualizacao.',
+    tone: 'gold',
+  },
+  {
+    label: 'Schema',
+    status: 'mercuriorionegro',
+    detail: 'Base principal selecionada para o sistema.',
+    tone: 'slate',
+  },
+]
+
+export const mockAdminChanges: DatabaseChangeItem[] = [
+  {
+    id: 'chg-1',
+    table: 'usuarios',
+    action: 'UPDATE',
+    recordId: 'u-doc-01',
+    summary: 'Usuario Dra. Helena Nascimento teve revisao recente de acesso.',
+    changedAt: '24/04/2026 16:20',
+    href: '/portal/admin/usuarios',
+  },
+  {
+    id: 'chg-2',
+    table: 'registros_mercuario',
+    action: 'INSERT',
+    recordId: 'R-2026-004',
+    summary: 'Novo registro de mercurio foi incluido na base.',
+    changedAt: '24/04/2026 15:54',
+    href: '/portal/admin/banco',
+  },
+]
