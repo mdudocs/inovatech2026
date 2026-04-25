@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { RiverMapPanel } from '../components/RiverMapPanel'
 import { communityRows, priorityCommunities, riskLabel } from '../siteData'
 
 type CommunityFilter = 'all' | 'critical' | 'high' | 'other'
@@ -55,6 +56,20 @@ export function CommunitiesPage() {
             </article>
           ))}
         </div>
+      </section>
+
+      <section className="section">
+        <div className="section-intro">
+          <span className="section-kicker">Mapa real</span>
+          <h2>Pontos de monitoramento posicionados no mapa do territorio.</h2>
+          <p>
+            Esta leitura mostra o mapa real com os pontos prioritarios ja
+            marcados, facilitando a consulta por trecho, comunidade e nivel de
+            atencao.
+          </p>
+        </div>
+
+        <RiverMapPanel mode="community" />
       </section>
 
       <section className="section">
