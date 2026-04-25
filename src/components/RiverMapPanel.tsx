@@ -1,236 +1,599 @@
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { CircleMarker, MapContainer, Pane, TileLayer, Tooltip } from 'react-leaflet'
+import { ExternalLink, LocateFixed, MapPinned } from 'lucide-react'
+import 'leaflet/dist/leaflet.css'
 import {
-  mapLegend,
   riskLabel,
   routeStops,
   territoryMarkers,
   type RiskTone,
-  type Stop,
-  type TerritoryMarker,
 } from '../siteData'
+import {
+  collectionCommunityOptions,
+  mergeLiveCollections,
+  readLiveCollections,
+  type LiveCollectionRecord,
+} from '../utils/liveCollections'
+import { fetchLiveCollections } from '../services/portalApi'
 
-type MapTooltipPoint = Stop | TerritoryMarker
+type MapDetailMode = 'community' | 'technical'
+type MapRiskTone = 'low' | RiskTone
 
-function getMapTooltipPosition(point: MapTooltipPoint) {
-  const width = 244
-  const height = 108
-  let x = point.x + 22
-  let y = point.y - height - 18
-  let placement: 'above' | 'below' = 'above'
-
-  if (x + width > 1176) {
-    x = point.x - width - 22
-  }
-
-  if (y < 24) {
-    y = point.y + 24
-    placement = 'below'
-  }
-
-  return { x, y, width, height, placement }
+type RiverMapPanelProps = {
+  mode?: MapDetailMode
+  token?: string
 }
 
-function getRiskAriaLabel(name: string, risk: RiskTone) {
-  return `${name}: ${riskLabel[risk]}`
+type BaseMapPoint = {
+  id: string
+  name: string
+  detail: string
+  area: string
+  population: string
+  mercurySignal: string
+  exposure: string
+  guidance: string
+  refs: string
+  lat: number
+  lng: number
+  risk: RiskTone
 }
 
-export function RiverMapPanel() {
-  const [activeMapPoint, setActiveMapPoint] = useState<MapTooltipPoint | null>(
-    null,
+type CommunityMapPoint = BaseMapPoint & {
+  currentRisk: MapRiskTone
+  collectionCount: number
+  criticalCount: number
+  highCount: number
+  mediumCount: number
+  latestCollectionAt: string | null
+  latestStatus: string | null
+  latestSampleType: string | null
+  latestNote: string | null
+  photoCount: number
+  focusReason: string
+}
+
+const pointCoordinates = new Map(
+  collectionCommunityOptions.map((item) => [item.name, item]),
+)
+
+const mapBounds: [[number, number], [number, number]] = [
+  [-13.6, -74.5],
+  [5.8, -44.8],
+]
+
+function getBaseMapPoints(): BaseMapPoint[] {
+  return [...routeStops, ...territoryMarkers]
+    .flatMap((point) => {
+      const coordinates = pointCoordinates.get(point.name)
+
+      if (!coordinates) {
+        return []
+      }
+
+      return [{
+        id: `monitoring-${point.name}`,
+        name: point.name,
+        detail: point.detail,
+        area: point.area,
+        population: point.population,
+        mercurySignal: point.mercurySignal,
+        exposure: point.exposure,
+        guidance: point.guidance,
+        refs: point.refs,
+        lat: coordinates.lat,
+        lng: coordinates.lng,
+        risk: point.risk,
+      }]
+    })
+}
+
+const baseMapPoints = getBaseMapPoints()
+
+function getRiskSeverity(risk: MapRiskTone) {
+  if (risk === 'critical') {
+    return 3
+  }
+
+  if (risk === 'high') {
+    return 2
+  }
+
+  if (risk === 'medium') {
+    return 1
+  }
+
+  return 0
+}
+
+function maxRiskTone(first: MapRiskTone, second: MapRiskTone): MapRiskTone {
+  return getRiskSeverity(first) >= getRiskSeverity(second) ? first : second
+}
+
+function getMapRiskLabel(risk: MapRiskTone) {
+  if (risk === 'low') {
+    return 'Baixo'
+  }
+
+  return riskLabel[risk]
+}
+
+function getRiskStrokeColor(risk: MapRiskTone) {
+  if (risk === 'critical') {
+    return '#d94b43'
+  }
+
+  if (risk === 'high') {
+    return '#c68a18'
+  }
+
+  if (risk === 'medium') {
+    return '#218b93'
+  }
+
+  return '#4d7f84'
+}
+
+function getRiskFillColor(risk: MapRiskTone) {
+  if (risk === 'critical') {
+    return '#ff7d72'
+  }
+
+  if (risk === 'high') {
+    return '#f5bf43'
+  }
+
+  if (risk === 'medium') {
+    return '#45c2b1'
+  }
+
+  return '#8db8b3'
+}
+
+function getMarkerRadius(point: CommunityMapPoint) {
+  return Math.min(18, 9 + point.collectionCount * 1.35)
+}
+
+function getPointRecords(records: LiveCollectionRecord[], pointName: string) {
+  return records.filter((record) => record.community === pointName)
+}
+
+function getDerivedRisk(records: LiveCollectionRecord[]): MapRiskTone {
+  if (records.length === 0) {
+    return 'low'
+  }
+
+  let score = 0
+  let criticalCount = 0
+  let highCount = 0
+  let mediumCount = 0
+
+  for (const record of records) {
+    if (record.risk === 'critical') {
+      criticalCount += 1
+      score += 3
+      continue
+    }
+
+    if (record.risk === 'high') {
+      highCount += 1
+      score += 2
+      continue
+    }
+
+    mediumCount += 1
+    score += 1
+  }
+
+  if (records.length >= 5 || criticalCount >= 2 || score >= 9) {
+    return 'critical'
+  }
+
+  if (records.length >= 3 || criticalCount >= 1 || highCount >= 2 || score >= 5) {
+    return 'high'
+  }
+
+  if (records.length >= 1 || mediumCount >= 1) {
+    return 'medium'
+  }
+
+  return 'low'
+}
+
+function getFocusReason(risk: MapRiskTone, records: LiveCollectionRecord[]) {
+  if (records.length === 0) {
+    return 'Sem coletas recentes publicadas; o ponto segue com a referencia historica do territorio.'
+  }
+
+  if (risk === 'critical') {
+    return `Foco muito alto: ${records.length} coleta(s) recentes empurraram a comunidade para prioridade maxima.`
+  }
+
+  if (risk === 'high') {
+    return `Foco alto: o acumulado recente ja elevou a pressao operacional desta comunidade.`
+  }
+
+  if (risk === 'medium') {
+    return `Foco moderado: ha ${records.length} coleta(s) recente(s) em observacao nesta comunidade.`
+  }
+
+  return 'Sem acumulado recente que eleve o foco operacional desta comunidade.'
+}
+
+function buildCommunityPoint(
+  point: BaseMapPoint,
+  liveCollections: LiveCollectionRecord[],
+): CommunityMapPoint {
+  const pointRecords = getPointRecords(liveCollections, point.name)
+  const latestRecord = pointRecords[0] ?? null
+  const criticalCount = pointRecords.filter((record) => record.risk === 'critical').length
+  const highCount = pointRecords.filter((record) => record.risk === 'high').length
+  const mediumCount = pointRecords.filter((record) => record.risk === 'medium').length
+  const derivedRisk = getDerivedRisk(pointRecords)
+  const currentRisk = maxRiskTone(point.risk, derivedRisk)
+
+  return {
+    ...point,
+    currentRisk,
+    collectionCount: pointRecords.length,
+    criticalCount,
+    highCount,
+    mediumCount,
+    latestCollectionAt: latestRecord?.collectedAt ?? null,
+    latestStatus: latestRecord?.status ?? null,
+    latestSampleType: latestRecord?.sampleType ?? null,
+    latestNote: latestRecord?.note ?? null,
+    photoCount: pointRecords.reduce(
+      (total, record) => total + (record.photos?.length ?? 0),
+      0,
+    ),
+    focusReason: getFocusReason(currentRisk, pointRecords),
+  }
+}
+
+function getInitialSelectedPoint(liveCollections: LiveCollectionRecord[]) {
+  const points = baseMapPoints.map((point) => buildCommunityPoint(point, liveCollections))
+  return (
+    points
+      .slice()
+      .sort((first, second) => {
+        const riskDifference =
+          getRiskSeverity(second.currentRisk) - getRiskSeverity(first.currentRisk)
+
+        if (riskDifference !== 0) {
+          return riskDifference
+        }
+
+        return second.collectionCount - first.collectionCount
+      })[0] ?? points[0]
+  )
+}
+
+function formatCollectionSummary(point: CommunityMapPoint) {
+  if (point.collectionCount === 0) {
+    return 'Sem coletas recentes'
+  }
+
+  return `${point.collectionCount} coleta(s) recente(s)`
+}
+
+function getLatestSampleSummary(point: CommunityMapPoint) {
+  if (!point.latestSampleType && !point.latestStatus) {
+    return 'Sem nova coleta publicada'
+  }
+
+  return `${point.latestSampleType ?? 'Coleta recente'} | ${point.latestStatus ?? 'Status pendente'}`
+}
+
+function getPhotoSummary(point: CommunityMapPoint) {
+  if (point.photoCount === 0) {
+    return 'Sem fotos enviadas'
+  }
+
+  return `${point.photoCount} foto(s) de campo vinculada(s)`
+}
+
+export function RiverMapPanel({ mode = 'technical', token }: RiverMapPanelProps) {
+  const [selectedPointId, setSelectedPointId] = useState(() =>
+    getInitialSelectedPoint(readLiveCollections())?.id ?? baseMapPoints[0]?.id ?? '',
+  )
+  const [liveCollections, setLiveCollections] = useState<LiveCollectionRecord[]>(
+    () => readLiveCollections(),
+  )
+  const [lastRefresh, setLastRefresh] = useState(() =>
+    new Date().toLocaleTimeString('pt-BR', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    }),
   )
 
-  const activeTooltipPosition = activeMapPoint
-    ? getMapTooltipPosition(activeMapPoint)
-    : null
+  const isCommunityMode = mode === 'community'
+
+  const communityPoints = useMemo(
+    () => baseMapPoints.map((point) => buildCommunityPoint(point, liveCollections)),
+    [liveCollections],
+  )
+
+  const selectedMapPoint =
+    communityPoints.find((point) => point.id === selectedPointId) ?? communityPoints[0]
+
+  const highlightedCount = communityPoints.filter(
+    (point) => point.currentRisk === 'high' || point.currentRisk === 'critical',
+  ).length
+
+  useEffect(() => {
+    let isMounted = true
+
+    async function refreshLiveCollections() {
+      const localRecords = readLiveCollections()
+
+      if (isMounted) {
+        setLiveCollections(localRecords)
+      }
+
+      if (token) {
+        try {
+          const apiRecords = await fetchLiveCollections(token)
+
+          if (isMounted) {
+            setLiveCollections(mergeLiveCollections(apiRecords, localRecords))
+          }
+        } catch {
+          if (isMounted) {
+            setLiveCollections(localRecords)
+          }
+        }
+      }
+
+      if (!isMounted) {
+        return
+      }
+
+      setLastRefresh(
+        new Date().toLocaleTimeString('pt-BR', {
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+        }),
+      )
+    }
+
+    const handleRefresh = () => {
+      void refreshLiveCollections()
+    }
+
+    handleRefresh()
+    const intervalId = window.setInterval(handleRefresh, 5000)
+    window.addEventListener('storage', handleRefresh)
+    window.addEventListener('aquasafe-live-collections-updated', handleRefresh)
+
+    return () => {
+      isMounted = false
+      window.clearInterval(intervalId)
+      window.removeEventListener('storage', handleRefresh)
+      window.removeEventListener(
+        'aquasafe-live-collections-updated',
+        handleRefresh,
+      )
+    }
+  }, [token])
+
+  if (!selectedMapPoint) {
+    return null
+  }
 
   return (
-    <article className="corridor-card">
+    <article
+      className={`corridor-card ${
+        isCommunityMode ? 'corridor-card-compact' : 'corridor-card-technical'
+      }`}
+    >
       <div className="corridor-head">
         <div>
-          <span className="minor-tag">Eixo monitorado</span>
-          <h3>Manaus, Novo Airao, Barcelos, Santa Isabel e Sao Gabriel</h3>
+          <span className="minor-tag">
+            {isCommunityMode ? 'Mapa interativo da comunidade' : 'Mapa em tempo real'}
+          </span>
+          <h3>
+            {isCommunityMode
+              ? 'Mapa real com pontos de monitoramento por comunidade'
+              : 'Mapa navegavel com foco atualizado pelas coletas de campo'}
+          </h3>
         </div>
-        <p>700 km de monitoramento prioritario</p>
+        <p>
+          {isCommunityMode
+            ? 'Arraste, aproxime e toque nos pontos para ver a situacao atual da comunidade.'
+            : 'O foco muda conforme as coletas chegam: mais registros altos e muito altos elevam a prioridade do ponto.'}
+        </p>
       </div>
 
-      <div className="corridor-map-shell">
-        <svg
-          className="river-map"
-          viewBox="0 0 1200 460"
-          role="img"
-          aria-label="Mapa ilustrado do monitoramento no Rio Negro com pontos prioritarios"
+      <div className="real-map-shell real-map-shell-interactive">
+        <MapContainer
+          bounds={mapBounds}
+          boundsOptions={{ padding: [24, 24] }}
+          className="real-map real-map-interactive"
+          maxBounds={mapBounds}
+          maxBoundsViscosity={0.9}
+          minZoom={4}
+          scrollWheelZoom
         >
-          <defs>
-            <filter id="riverGlow" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="10" result="blur" />
-              <feMerge>
-                <feMergeNode in="blur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
-          </defs>
+          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
-          <rect className="map-bg" x="0" y="0" width="1200" height="460" rx="24" />
-
-          <path className="tributary-path" d="M 404 238 C 396 286, 384 332, 370 382" />
-          <path className="tributary-path" d="M 698 170 C 690 122, 684 88, 672 42" />
-          <path className="tributary-path" d="M 904 178 C 918 128, 922 86, 916 30" />
-
-          <path
-            className="river-path river-path-glow"
-            filter="url(#riverGlow)"
-            d="M 78 220
-              C 138 204, 182 210, 236 232
-              C 290 254, 342 260, 405 242
-              C 470 223, 538 188, 626 178
-              C 714 168, 780 196, 856 186
-              C 932 176, 1016 142, 1110 156
-              C 1134 160, 1148 158, 1162 150"
-          />
-          <path
-            className="river-path river-path-main"
-            d="M 78 220
-              C 138 204, 182 210, 236 232
-              C 290 254, 342 260, 405 242
-              C 470 223, 538 188, 626 178
-              C 714 168, 780 196, 856 186
-              C 932 176, 1016 142, 1110 156
-              C 1134 160, 1148 158, 1162 150"
-          />
-          <path
-            className="river-path river-path-highlight"
-            d="M 78 220
-              C 138 204, 182 210, 236 232
-              C 290 254, 342 260, 405 242
-              C 470 223, 538 188, 626 178
-              C 714 168, 780 196, 856 186
-              C 932 176, 1016 142, 1110 156
-              C 1134 160, 1148 158, 1162 150"
-          />
-
-          {routeStops.map((stop) => (
-            <g
-              key={stop.name}
-              className={`map-stop map-stop-${stop.risk} map-stop-trigger${
-                activeMapPoint?.name === stop.name ? ' map-stop-active' : ''
-              }`}
-              onMouseEnter={() => setActiveMapPoint(stop)}
-              onMouseLeave={() => setActiveMapPoint(null)}
-              onFocus={() => setActiveMapPoint(stop)}
-              onBlur={() => setActiveMapPoint(null)}
-              tabIndex={0}
-              role="button"
-              aria-label={getRiskAriaLabel(stop.name, stop.risk)}
-            >
-              <circle className="stop-halo" cx={stop.x} cy={stop.y} r="26" />
-              <circle className="stop-pulse" cx={stop.x} cy={stop.y} r="16" />
-              <circle className="stop-ring" cx={stop.x} cy={stop.y} r="16" />
-              <circle className="stop-core" cx={stop.x} cy={stop.y} r="8" />
-              <text
-                className="stop-name"
-                x={stop.labelX}
-                y={stop.labelY}
-                textAnchor={stop.labelAnchor ?? 'middle'}
-              >
-                {stop.name}
-              </text>
-            </g>
-          ))}
-
-          {territoryMarkers.map((marker) => (
-            <g
-              key={marker.name}
-              className={`map-stop map-stop-${marker.risk} map-stop-trigger${
-                activeMapPoint?.name === marker.name ? ' map-stop-active' : ''
-              }`}
-              onMouseEnter={() => setActiveMapPoint(marker)}
-              onMouseLeave={() => setActiveMapPoint(null)}
-              onFocus={() => setActiveMapPoint(marker)}
-              onBlur={() => setActiveMapPoint(null)}
-              tabIndex={0}
-              role="button"
-              aria-label={getRiskAriaLabel(marker.name, marker.risk)}
-            >
-              <circle className="marker-pulse" cx={marker.x} cy={marker.y} r="12" />
-              <circle className="marker-ring" cx={marker.x} cy={marker.y} r="12" />
-              <circle className="marker-core" cx={marker.x} cy={marker.y} r="5" />
-              <text
-                className="marker-name"
-                x={marker.labelX}
-                y={marker.labelY}
-                textAnchor={marker.labelAnchor ?? 'middle'}
-              >
-                {marker.name}
-              </text>
-            </g>
-          ))}
-
-          {activeMapPoint && activeTooltipPosition ? (
-            <foreignObject
-              x={activeTooltipPosition.x}
-              y={activeTooltipPosition.y}
-              width={activeTooltipPosition.width}
-              height={activeTooltipPosition.height}
-              className="map-tooltip-shell"
-              aria-hidden="true"
-            >
-              <div
-                className={`map-tooltip ${
-                  activeTooltipPosition.placement === 'below'
-                    ? 'map-tooltip-below'
-                    : 'map-tooltip-above'
-                }`}
-              >
-                <span className={`map-tooltip-level map-tooltip-${activeMapPoint.risk}`}>
-                  Situacao {riskLabel[activeMapPoint.risk]}
-                </span>
-                <strong>{activeMapPoint.name}</strong>
-                <p>{activeMapPoint.detail}</p>
-              </div>
-            </foreignObject>
-          ) : null}
-
-          <g className="map-legend" aria-hidden="true">
-            <rect className="map-legend-box" x="882" y="318" width="238" height="92" rx="18" />
-            <text className="map-legend-title" x="902" y="343">
-              Legenda de risco
-            </text>
-            {mapLegend.map((item, index) => {
-              const column = index % 2
-              const row = Math.floor(index / 2)
-              const x = 904 + column * 112
-              const y = 366 + row * 24
+          <Pane name="community-points" style={{ zIndex: 450 }}>
+            {communityPoints.map((point) => {
+              const isSelected = point.id === selectedMapPoint.id
 
               return (
-                <g key={item.key} className="map-legend-item">
-                  <circle
-                    className={`map-legend-dot map-legend-dot-${item.key}`}
-                    cx={x}
-                    cy={y - 4}
-                    r="5"
-                  />
-                  <text className="map-legend-label" x={x + 14} y={y}>
-                    {item.label}
-                  </text>
-                </g>
+                <CircleMarker
+                  center={[point.lat, point.lng]}
+                  eventHandlers={{
+                    click: () => setSelectedPointId(point.id),
+                  }}
+                  fillColor={getRiskFillColor(point.currentRisk)}
+                  fillOpacity={0.92}
+                  key={point.id}
+                  pathOptions={{
+                    color: getRiskStrokeColor(point.currentRisk),
+                    weight: isSelected ? 5 : 3,
+                  }}
+                  radius={getMarkerRadius(point)}
+                >
+                  <Tooltip
+                    direction="top"
+                    offset={[0, -10]}
+                    opacity={1}
+                  >
+                    <div className={`real-map-tooltip-body real-map-tooltip-body-${point.currentRisk}`}>
+                      <span>{getMapRiskLabel(point.currentRisk)}</span>
+                      <strong>{point.name}</strong>
+                      <small>{point.area}</small>
+                      <p>{point.detail}</p>
+                      <p>{point.focusReason}</p>
+                      <small>{formatCollectionSummary(point)}</small>
+                      <small>{getLatestSampleSummary(point)}</small>
+                      <small>{getPhotoSummary(point)}</small>
+                    </div>
+                  </Tooltip>
+                </CircleMarker>
               )
             })}
-          </g>
-
-          <g className="map-scale" aria-hidden="true">
-            <line x1="76" y1="408" x2="316" y2="408" />
-            <line x1="76" y1="400" x2="76" y2="416" />
-            <line x1="316" y1="400" x2="316" y2="416" />
-            <text x="196" y="432" textAnchor="middle">
-              ~ 200 km
-            </text>
-          </g>
-
-          <g className="map-north" aria-hidden="true">
-            <text x="1132" y="420">N</text>
-          </g>
-        </svg>
+          </Pane>
+        </MapContainer>
       </div>
+
+      <div className="real-map-bottom-bar">
+        <div className="real-map-meta">
+          <span className="real-map-meta-chip">
+            <MapPinned size={14} />
+            {communityPoints.length} pontos acompanhados
+          </span>
+          <span className="real-map-meta-chip">
+            <LocateFixed size={14} />
+            {highlightedCount} em foco alto ou muito alto
+          </span>
+        </div>
+
+        <div className="real-map-legend" aria-hidden="true">
+          <span>
+            <i className="legend-dot legend-dot-low" />
+            Baixo
+          </span>
+          <span>
+            <i className="legend-dot legend-dot-medium" />
+            Moderado
+          </span>
+          <span>
+            <i className="legend-dot legend-dot-high" />
+            Alto
+          </span>
+          <span>
+            <i className="legend-dot legend-dot-critical" />
+            Muito alto
+          </span>
+        </div>
+      </div>
+
+      <div className="live-map-status" aria-live="polite">
+        <span>
+          <strong>{liveCollections.length}</strong> coletas recentes sincronizadas
+        </span>
+        <span>Atualizado as {lastRefresh}</span>
+      </div>
+
+      <aside
+        className={`community-map-panel community-map-panel-${selectedMapPoint.currentRisk} ${
+          isCommunityMode ? 'community-map-panel-compact' : ''
+        }`}
+        aria-live="polite"
+      >
+        <div className="community-map-panel-head">
+          <div>
+            <span className="minor-tag">
+              {isCommunityMode ? 'Resumo do ponto' : 'Ponto selecionado no mapa'}
+            </span>
+            <h4>{selectedMapPoint.name}</h4>
+          </div>
+          <span className={`risk-pill risk-${selectedMapPoint.currentRisk === 'low' ? 'medium' : selectedMapPoint.currentRisk}`}>
+            {getMapRiskLabel(selectedMapPoint.currentRisk)}
+          </span>
+        </div>
+
+        <div className="community-map-panel-grid">
+          <div>
+            <small>Trecho</small>
+            <strong>{selectedMapPoint.area}</strong>
+          </div>
+          <div>
+            <small>Populacao acompanhada</small>
+            <strong>{selectedMapPoint.population}</strong>
+          </div>
+          <div>
+            <small>Coletas recentes</small>
+            <strong>{formatCollectionSummary(selectedMapPoint)}</strong>
+          </div>
+          <div>
+            <small>Ultima atualizacao do ponto</small>
+            <strong>{selectedMapPoint.latestCollectionAt ?? 'Sem nova coleta publicada'}</strong>
+          </div>
+          <div>
+            <small>Fotos de campo</small>
+            <strong>{getPhotoSummary(selectedMapPoint)}</strong>
+          </div>
+          <div>
+            <small>Ultima nota</small>
+            <strong>{selectedMapPoint.latestNote || 'Sem observacao recente'}</strong>
+          </div>
+        </div>
+
+        <div className="community-map-side-grid">
+          <article className="community-map-side-card">
+            <small>Leitura do foco</small>
+            <strong>{selectedMapPoint.focusReason}</strong>
+          </article>
+          <article className="community-map-side-card">
+            <small>Distribuicao recente</small>
+            <strong>
+              {selectedMapPoint.criticalCount} muito altas, {selectedMapPoint.highCount} altas e{' '}
+              {selectedMapPoint.mediumCount} moderadas
+            </strong>
+          </article>
+        </div>
+
+        {isCommunityMode ? (
+          <div className="community-map-action">
+            <ExternalLink size={18} />
+            <div>
+              <span>Orientacao principal</span>
+              <p>{selectedMapPoint.guidance}</p>
+            </div>
+          </div>
+        ) : (
+          <>
+            <div className="community-map-panel-grid">
+              <div>
+                <small>Sinal territorial</small>
+                <strong>{selectedMapPoint.mercurySignal}</strong>
+              </div>
+              <div>
+                <small>Exposicao provavel</small>
+                <strong>{selectedMapPoint.exposure}</strong>
+              </div>
+            </div>
+
+            <div className="community-map-action">
+              <ExternalLink size={18} />
+              <div>
+                <span>Ultimo status operacional</span>
+                <p>
+                  {selectedMapPoint.latestSampleType ?? 'Aguardando nova coleta'} |{' '}
+                  {selectedMapPoint.latestStatus ?? 'Sem status recente'}
+                </p>
+                <small>Referencias: {selectedMapPoint.refs}</small>
+              </div>
+            </div>
+          </>
+        )}
+      </aside>
     </article>
   )
 }

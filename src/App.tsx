@@ -7,6 +7,7 @@ import { AdminPortalPage } from './pages/admin/AdminPortalPage'
 import type { AuthSession, UserRole } from './portalTypes'
 import { AdminLoginPage } from './pages/portal/AdminLoginPage'
 import { LandingPage } from './pages/portal/LandingPage'
+import { CollectorMobilePage } from './pages/portal/CollectorMobilePage'
 import { LoginPage } from './pages/portal/LoginPage'
 import { PortalPage } from './pages/portal/PortalPage'
 import { login } from './services/portalApi'
@@ -90,6 +91,10 @@ function App() {
             <Route
               path="/portal/admin/:section"
               element={<AdminPortalPage session={session} />}
+            />
+            <Route
+              path="/portal/collector/coletas"
+              element={<CollectorMobilePage session={session} />}
             />
             <Route
               path="/portal/:role"
