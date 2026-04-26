@@ -214,7 +214,9 @@ export function AdminPortalPage({ session }: { session: AuthSession | null }) {
         </section>
       ) : null}
 
-      {section === 'visao-geral' ? <AdminOverviewSection data={data as AdminOverviewDashboard} /> : null}
+      {section === 'visao-geral' ? (
+        <AdminOverviewSection data={data as AdminOverviewDashboard} token={session.token} />
+      ) : null}
       {section === 'usuarios' ? (
         <AdminUsersSection
           currentUserId={session.user.id}

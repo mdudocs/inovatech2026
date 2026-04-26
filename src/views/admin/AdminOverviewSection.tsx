@@ -3,9 +3,16 @@ import { RecentChangesPanel } from '../../components/admin/RecentChangesPanel'
 import { AlertList } from '../../components/portal/AlertList'
 import { MetricSection } from '../../components/portal/MetricSection'
 import { Panel } from '../../components/portal/Panel'
+import { LazyRiverMapPanel } from '../../components/LazyRiverMapPanel'
 import type { AdminOverviewDashboard } from '../../portalTypes'
 
-export function AdminOverviewSection({ data }: { data: AdminOverviewDashboard }) {
+export function AdminOverviewSection({
+  data,
+  token,
+}: {
+  data: AdminOverviewDashboard
+  token: string
+}) {
   return (
     <>
       <MetricSection items={data.stats} />
@@ -22,6 +29,8 @@ export function AdminOverviewSection({ data }: { data: AdminOverviewDashboard })
           </ul>
         </Panel>
       </section>
+
+      <LazyRiverMapPanel mode="technical" token={token} />
 
       <RecentChangesPanel changes={data.changes} />
     </>

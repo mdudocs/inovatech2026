@@ -1,5 +1,5 @@
 export type ThemeTone = 'teal' | 'gold' | 'coral' | 'slate'
-export type UserRole = 'population' | 'doctor' | 'collector' | 'admin'
+export type UserRole = 'population' | 'nurse' | 'doctor' | 'collector' | 'admin'
 export type SourceMode = 'mock' | 'api'
 export type AlertLevel = 'critical' | 'attention' | 'stable'
 export type AdminSection = 'visao-geral' | 'usuarios' | 'banco'
@@ -85,11 +85,63 @@ export type PopulationDashboard = {
 }
 
 export type DoctorCase = {
+  id: string
   patient: string
   community: string
   risk: string
   status: string
   nextStep: string
+  priorityGroup: string
+  symptoms: string
+  exposureSummary: string
+  clinicalNote: string
+  lastAction: string
+  updatedAt: string
+  returnAt?: string
+}
+
+export type DoctorCaseActionPayload = {
+  action: 'request_biomarker' | 'schedule_return' | 'save_conduct'
+  note: string
+}
+
+export type DoctorCaseActionResult = {
+  case: DoctorCase
+}
+
+export type TriageCaseActionPayload = {
+  action:
+    | 'classify_priority'
+    | 'send_to_doctor'
+    | 'request_biomarker'
+    | 'schedule_return'
+  note: string
+  returnAt?: string
+}
+
+export type TriageCaseActionResult = {
+  case: DoctorCase
+}
+
+export type CreateTriageCasePayload = {
+  patient: string
+  community: string
+  risk: string
+  priorityGroup: string
+  symptoms: string
+  exposureSummary: string
+  note: string
+}
+
+export type NurseDashboard = {
+  kind: 'nurse'
+  headline: string
+  summary: string
+  stats: MetricCard[]
+  alerts: AlertItem[]
+  cases: DoctorCase[]
+  triageGuides: string[]
+  queueNotes: string[]
 }
 
 export type DoctorDashboard = {
@@ -210,6 +262,7 @@ export type AdminDashboard = {
 
 export type DashboardByRole = {
   population: PopulationDashboard
+  nurse: NurseDashboard
   doctor: DoctorDashboard
   collector: CollectorDashboard
   admin: AdminDashboard

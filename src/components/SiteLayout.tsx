@@ -1,6 +1,7 @@
-import { MapPinned, Moon, ShieldAlert, SunMedium } from 'lucide-react'
+import { MapPinned, Moon, SunMedium } from 'lucide-react'
 import { NavLink, Outlet } from 'react-router-dom'
 import { navItems } from '../siteData'
+import { AquaSafeLogo } from './AquaSafeLogo'
 import { InstitutionalBand } from './InstitutionalBand'
 
 type SiteLayoutProps = {
@@ -15,12 +16,10 @@ export function SiteLayout({ theme, onToggleTheme }: SiteLayoutProps) {
     <div className="page-shell">
       <header className="site-header">
         <div className="brand-block">
-          <div className="brand-mark">
-            <ShieldAlert size={18} strokeWidth={2.2} />
-          </div>
+          <AquaSafeLogo />
           <div>
-            <p className="brand-chip">Inovatech 2026</p>
-            <strong className="brand-title">Observatorio Mercurio Rio Negro</strong>
+            <p className="brand-chip">AquaSafe</p>
+            <strong className="brand-title">Monitoramento ambiental e saude territorial</strong>
           </div>
         </div>
 

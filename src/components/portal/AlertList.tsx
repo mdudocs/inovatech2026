@@ -7,7 +7,17 @@ const statusByLevel = {
   critical: { label: 'Offline', className: 'alert-status-offline' },
 }
 
-export function AlertList({ alerts }: { alerts: AlertItem[] }) {
+export function AlertList({
+  alerts,
+  emptyMessage = 'Nenhum alerta registrado no momento.',
+}: {
+  alerts: AlertItem[]
+  emptyMessage?: string
+}) {
+  if (alerts.length === 0) {
+    return <p className="section-text">{emptyMessage}</p>
+  }
+
   return (
     <div className="stack-list">
       {alerts.map((alert) => {

@@ -24,3 +24,5 @@ dist-ssr
 *.sw?
 _repo_inspect
 _scaffold
+
+.vercel

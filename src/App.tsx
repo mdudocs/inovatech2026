@@ -6,6 +6,7 @@ import { roleMeta } from './mockPortalData'
 import { AdminPortalPage } from './pages/admin/AdminPortalPage'
 import type { AuthSession, UserRole } from './portalTypes'
 import { AdminLoginPage } from './pages/portal/AdminLoginPage'
+import { CollectionArchivePage } from './pages/portal/CollectionArchivePage'
 import { LandingPage } from './pages/portal/LandingPage'
 import { CollectorMobilePage } from './pages/portal/CollectorMobilePage'
 import { LoginPage } from './pages/portal/LoginPage'
@@ -95,6 +96,10 @@ function App() {
             <Route
               path="/portal/collector/coletas"
               element={<CollectorMobilePage session={session} />}
+            />
+            <Route
+              path="/portal/coletas"
+              element={<CollectionArchivePage session={session} />}
             />
             <Route
               path="/portal/:role"
