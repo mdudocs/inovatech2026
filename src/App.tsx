@@ -16,6 +16,9 @@ import { applyTheme, resolveInitialTheme } from './theme'
 import { readStoredSession, saveSession } from './utils/portalSession'
 
 function App() {
+  // O App centraliza duas responsabilidades globais:
+  // 1. tema claro/escuro
+  // 2. sessao autenticada do usuario
   const [theme, setTheme] = useState(resolveInitialTheme)
   const [session, setSession] = useState<AuthSession | null>(() => readStoredSession())
 
@@ -29,6 +32,8 @@ function App() {
     password: string,
     accessKey?: string,
   ) {
+    // Todo login do portal passa por aqui para manter sessao e armazenamento
+    // local sempre sincronizados com a resposta da API.
     const nextSession = await login({ role, identifier, password, accessKey })
     setSession(nextSession)
     saveSession(nextSession)
@@ -53,6 +58,8 @@ function App() {
         />
 
         <main className="page-wrap">
+          {/* As rotas publicas e autenticadas ficam concentradas aqui para a equipe
+              enxergar rapidamente a estrutura geral do sistema. */}
           <Routes>
             <Route index element={<LandingPage session={session} />} />
             <Route

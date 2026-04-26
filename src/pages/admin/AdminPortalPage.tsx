@@ -35,6 +35,8 @@ type AdminSectionData =
   | AdminDatabaseDashboard
 
 export function AdminPortalPage({ session }: { session: AuthSession | null }) {
+  // Esta pagina e a porta de entrada da area administrativa.
+  // Ela decide qual secao carregar e mantem o refresh periodico dos dados.
   const { section } = useParams()
   const [data, setData] = useState<AdminSectionData | null>(null)
   const [loadedSection, setLoadedSection] = useState<AdminSection | null>(null)
@@ -51,6 +53,8 @@ export function AdminPortalPage({ session }: { session: AuthSession | null }) {
     let active = true
 
     async function readSectionData(targetSection: AdminSection) {
+      // Cada secao administrativa conversa com um endpoint diferente,
+      // mas o fluxo de carregamento da pagina continua centralizado aqui.
       return targetSection === 'visao-geral'
         ? fetchAdminOverview(currentSession.token)
         : targetSection === 'usuarios'
@@ -215,6 +219,7 @@ export function AdminPortalPage({ session }: { session: AuthSession | null }) {
       ) : null}
 
       {section === 'visao-geral' ? (
+        // Cada secao pesada fica separada em view propria para reduzir acoplamento.
         <AdminOverviewSection data={data as AdminOverviewDashboard} token={session.token} />
       ) : null}
       {section === 'usuarios' ? (

@@ -56,6 +56,8 @@ export function NurseView({
   data: NurseDashboard
   token: string
 }) {
+  // A enfermagem trabalha em duas frentes nesta tela:
+  // abrir novas triagens e atualizar casos ja existentes.
   const [cases, setCases] = useState<DoctorCase[]>(data.cases)
   const [activeCaseId, setActiveCaseId] = useState(cases[0]?.id ?? '')
   const [triageNote, setTriageNote] = useState('')
@@ -82,6 +84,8 @@ export function NurseView({
   }
 
   function buildTriagePayload(): CreateTriageCasePayload {
+    // O payload de triagem consolida sinais vitais, sinais neurologicos
+    // e exposicao alimentar antes de seguir para a API.
     const vitalLines = [
       clinicalScreening.age ? `Idade: ${clinicalScreening.age}` : '',
       clinicalScreening.bloodPressure ? `PA: ${clinicalScreening.bloodPressure}` : '',
@@ -149,6 +153,8 @@ export function NurseView({
       return
     }
 
+    // Assim como no medico, as acoes de triagem compartilham o mesmo fluxo
+    // e mudam apenas o tipo de encaminhamento.
     setPendingAction(action)
     setActionError('')
 

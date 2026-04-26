@@ -1,5 +1,7 @@
 import type { UserRole } from './portalTypes'
 
+// Conteudo leve e compartilhado por telas de entrada.
+// Fica separado para evitar texto fixo espalhado em componentes.
 export const landingCards: Array<{
   role: UserRole
   points: string[]
@@ -39,6 +41,7 @@ export const landingCards: Array<{
 ]
 
 export const homeSteps = [
+  // Sequencia curta para orientar rapidamente o uso do portal.
   'Escolha o perfil correto.',
   'Entre com o login de teste.',
   'Acesse o painel do seu perfil.',

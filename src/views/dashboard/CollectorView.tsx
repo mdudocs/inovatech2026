@@ -43,6 +43,8 @@ export function CollectorView({
   data: CollectorDashboard
   token: string
 }) {
+  // Esta view atende o agente no desktop: resumo operacional,
+  // rota do dia, registro rapido e consulta das coletas recentes.
   const [selectedCommunity, setSelectedCommunity] = useState(
     collectionCommunityOptions[0].name,
   )
@@ -71,6 +73,8 @@ export function CollectorView({
     let active = true
 
     async function loadCollections() {
+      // O desktop tenta abrir com a visao mais completa possivel,
+      // mesclando o que esta na API com o cache local do navegador.
       const localRecords = readLiveCollections()
 
       try {
@@ -96,6 +100,8 @@ export function CollectorView({
   }, [token])
 
   async function handleSelectRecord(record: LiveCollectionRecord) {
+    // So buscamos detalhe extra quando o item ainda nao trouxe
+    // nota completa ou fotos no carregamento inicial.
     setSelectedRecordId(record.id)
     setDetailError('')
 
@@ -125,6 +131,8 @@ export function CollectorView({
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
+    // O desktop usa o mesmo formato de coleta da versao mobile,
+    // mas com um fluxo resumido para apoio operacional.
     const community =
       collectionCommunityOptions.find((item) => item.name === selectedCommunity) ??
       collectionCommunityOptions[0]

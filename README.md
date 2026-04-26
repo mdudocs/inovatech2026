@@ -26,6 +26,14 @@ Sistema web de monitoramento territorial para vigilancia de mercurio e apoio a d
 - `server/` API e integracao com banco
 - `public/` arquivos estaticos
 - `database/` materiais e apoio de banco
+- `docs/` documentacao para onboard da equipe
+
+## Documentacao da equipe
+
+- [docs/README.md](C:/Users/teste/Documents/Inovatech2026/docs/README.md)
+- [docs/por-onde-comecar.md](C:/Users/teste/Documents/Inovatech2026/docs/por-onde-comecar.md)
+- [docs/estrutura-do-projeto.md](C:/Users/teste/Documents/Inovatech2026/docs/estrutura-do-projeto.md)
+- [docs/arquitetura.md](C:/Users/teste/Documents/Inovatech2026/docs/arquitetura.md)
 
 ## Deploy recomendado
 
