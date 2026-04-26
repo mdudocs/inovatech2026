@@ -1,3 +1,4 @@
+// Pagina publica de metodologia e leitura tecnica do painel de risco.
 import type { CSSProperties } from 'react'
 import { factors, methodAxes, panelGapNote, priorityCommunities, riskLabel, riskScaleGuide } from '../siteData'
 

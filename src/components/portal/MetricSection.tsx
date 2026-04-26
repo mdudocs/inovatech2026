@@ -1,3 +1,4 @@
+// Secao reutilizavel de indicadores numericos dos paineis internos.
 import type { MetricCard } from '../../portalTypes'
 
 export function MetricSection({ items }: { items: MetricCard[] }) {

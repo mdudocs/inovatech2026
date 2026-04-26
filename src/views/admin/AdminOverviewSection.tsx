@@ -1,3 +1,4 @@
+// Resumo geral da administracao com alertas, metricas e mudancas recentes.
 import { BellRing, ShieldUser } from 'lucide-react'
 import { RecentChangesPanel } from '../../components/admin/RecentChangesPanel'
 import { AlertList } from '../../components/portal/AlertList'

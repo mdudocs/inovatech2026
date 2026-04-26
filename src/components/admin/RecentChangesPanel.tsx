@@ -1,3 +1,4 @@
+// Painel reutilizavel para mostrar rastreabilidade e mudancas recentes da administracao.
 import { DatabaseBackup } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Panel } from '../portal/Panel'

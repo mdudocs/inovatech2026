@@ -1,3 +1,4 @@
+// Layout compartilhado das paginas publicas, com navegacao, tema e rodape institucional.
 import { MapPinned, Moon, SunMedium } from 'lucide-react'
 import { NavLink, Outlet } from 'react-router-dom'
 import { navItems } from '../siteData'

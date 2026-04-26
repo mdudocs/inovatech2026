@@ -1,3 +1,5 @@
+// Camada unica de requests do frontend.
+// Centraliza base URL, timeout, erros e contratos de acesso a API.
 import {
   dashboardMocks,
   demoAccounts,

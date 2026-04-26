@@ -1,3 +1,4 @@
+// Wrapper de carregamento preguiçoso do mapa para reduzir o peso inicial do bundle.
 import { lazy, Suspense } from 'react'
 
 type LazyRiverMapPanelProps = {

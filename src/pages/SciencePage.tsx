@@ -1,3 +1,4 @@
+// Pagina publica da base cientifica e da rede de pesquisadores.
 import { BookOpen } from 'lucide-react'
 import { researchers, scienceStudies } from '../siteData'
 

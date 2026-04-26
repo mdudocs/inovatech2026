@@ -1,3 +1,5 @@
+// Base de conteudo do portal publico.
+// Reune textos, metricas, comunidades, estudos e configuracoes visuais do site.
 export type RiskTone = 'critical' | 'high' | 'medium'
 export type SignalTone = 'critical' | 'warning' | 'attention' | 'neutral'
 export type AudienceIcon = 'users' | 'flask' | 'bell'

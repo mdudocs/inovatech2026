@@ -1,3 +1,5 @@
+// Pagina inicial publica.
+// Resume sinais, mapa, destaques e acessos para quem chega ao sistema.
 import {
   AlertTriangle,
   ArrowRight,

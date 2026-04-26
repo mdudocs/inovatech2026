@@ -1,3 +1,4 @@
+// Utilitarios de sessao local: validacao de perfil, leitura e persistencia do login.
 import type { AuthSession, UserRole } from '../portalTypes'
 import { SESSION_STORAGE_KEY } from '../services/portalApi'
 

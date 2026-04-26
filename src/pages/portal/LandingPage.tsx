@@ -1,3 +1,4 @@
+// Tela inicial do portal autenticado, usada para orientar a escolha de perfil.
 import { ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { roleIcons } from '../../components/portal/roleIcons'

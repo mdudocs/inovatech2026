@@ -1,3 +1,4 @@
+// Secao administrativa de cadastro e manutencao de usuarios do sistema.
 import { useState, type FormEvent } from 'react'
 import { UserCog } from 'lucide-react'
 import { MetricSection } from '../../components/portal/MetricSection'
