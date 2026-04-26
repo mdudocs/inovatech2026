@@ -10,6 +10,12 @@ Isso e importante porque hoje o projeto mistura:
 - tabelas realmente usadas pela API em `server/index.js`
 - um schema base mais normalizado guardado em `database/inovatech_mysql_schema.sql`
 
+## Imagem pronta para apresentacao
+
+Se voce precisar de uma imagem direta para slide ou documento, use:
+
+- [fluxo-sistema.svg](C:/Users/teste/Documents/Inovatech2026/docs/fluxo-sistema.svg)
+
 ## 1. Schema atual usado pela API
 
 Hoje a API trabalha principalmente com estas tabelas:
@@ -292,7 +298,7 @@ flowchart TD
 
 ## 4. Leitura para apresentacao
 
-Se voce precisar explicar isso em slide, a narrativa mais clara e:
+ a narrativa mais clara e:
 
 1. `usuarios` controlam acesso por perfil
 2. `comunidades` organizam a leitura territorial

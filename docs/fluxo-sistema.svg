@@ -1,0 +1,150 @@
+<svg width="1600" height="980" viewBox="0 0 1600 980" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1600" y2="980" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#071A1F"/>
+      <stop offset="1" stop-color="#0D2B33"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#12353E"/>
+      <stop offset="1" stop-color="#0D2730"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#5EEAD4"/>
+      <stop offset="1" stop-color="#60A5FA"/>
+    </linearGradient>
+    <filter id="shadow" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="10" stdDeviation="18" flood-color="#021014" flood-opacity="0.35"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10V0Z" fill="#7DD3FC"/>
+    </marker>
+    <style>
+      .title { font: 700 34px 'Segoe UI', Arial, sans-serif; fill: #F4FBFC; }
+      .subtitle { font: 500 18px 'Segoe UI', Arial, sans-serif; fill: #B7CDD2; }
+      .section { font: 700 18px 'Segoe UI', Arial, sans-serif; fill: #D9F3F5; letter-spacing: 1px; }
+      .card-title { font: 700 19px 'Segoe UI', Arial, sans-serif; fill: #F5FEFF; }
+      .card-text { font: 500 14px 'Segoe UI', Arial, sans-serif; fill: #C7DCE0; }
+      .small { font: 600 13px 'Segoe UI', Arial, sans-serif; fill: #9AC6CC; letter-spacing: 1px; }
+      .db-title { font: 700 18px 'Segoe UI', Arial, sans-serif; fill: #08252B; }
+      .db-text { font: 600 13px 'Segoe UI', Arial, sans-serif; fill: #13414A; }
+      .line { stroke: #7DD3FC; stroke-width: 4; marker-end: url(#arrow); }
+      .soft-line { stroke: #5EEAD4; stroke-width: 3; marker-end: url(#arrow); }
+      .dash-line { stroke: #93C5FD; stroke-width: 3; stroke-dasharray: 10 8; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <rect width="1600" height="980" fill="url(#bg)"/>
+  <rect x="32" y="32" width="1536" height="916" rx="28" stroke="rgba(255,255,255,0.08)" fill="none"/>
+
+  <text x="70" y="92" class="title">Fluxo do Sistema Inovatech 2026</text>
+  <text x="70" y="126" class="subtitle">Do acesso do usuario ate a persistencia no MySQL e atualizacao do mapa</text>
+
+  <text x="80" y="176" class="section">1. ENTRADA E PERFIS</text>
+  <rect x="70" y="195" width="250" height="110" rx="24" fill="url(#card)" filter="url(#shadow)"/>
+  <text x="95" y="235" class="card-title">Usuario acessa o sistema</text>
+  <text x="95" y="262" class="card-text">Portal publico ou area de login</text>
+  <text x="95" y="284" class="card-text">Sessao, tema e rotas saem do App.tsx</text>
+
+  <rect x="380" y="180" width="200" height="62" rx="18" fill="#11323A"/>
+  <text x="407" y="218" class="card-title">Morador</text>
+  <rect x="380" y="255" width="200" height="62" rx="18" fill="#11323A"/>
+  <text x="402" y="293" class="card-title">Enfermagem</text>
+  <rect x="380" y="330" width="200" height="62" rx="18" fill="#11323A"/>
+  <text x="424" y="368" class="card-title">Medico</text>
+  <rect x="380" y="405" width="200" height="62" rx="18" fill="#11323A"/>
+  <text x="410" y="443" class="card-title">Agente</text>
+  <rect x="380" y="480" width="200" height="62" rx="18" fill="#11323A"/>
+  <text x="423" y="518" class="card-title">Admin</text>
+
+  <line x1="320" y1="250" x2="380" y2="210" class="line"/>
+  <line x1="320" y1="250" x2="380" y2="285" class="line"/>
+  <line x1="320" y1="250" x2="380" y2="360" class="line"/>
+  <line x1="320" y1="250" x2="380" y2="435" class="line"/>
+  <line x1="320" y1="250" x2="380" y2="510" class="line"/>
+
+  <text x="80" y="595" class="section">2. COLETA E LEITURA TERRITORIAL</text>
+  <rect x="70" y="615" width="300" height="128" rx="24" fill="url(#card)" filter="url(#shadow)"/>
+  <text x="96" y="655" class="card-title">Coleta mobile / desktop</text>
+  <text x="96" y="682" class="card-text">Formulario do agente</text>
+  <text x="96" y="704" class="card-text">Fotos, localizacao, protocolo e relatorio</text>
+  <text x="96" y="726" class="card-text">CollectorMobilePage + CollectorView</text>
+
+  <rect x="430" y="615" width="300" height="128" rx="24" fill="url(#card)" filter="url(#shadow)"/>
+  <text x="456" y="655" class="card-title">Cache local no aparelho</text>
+  <text x="456" y="682" class="card-text">LocalStorage guarda a coleta primeiro</text>
+  <text x="456" y="704" class="card-text">Evita travar em internet ruim</text>
+  <text x="456" y="726" class="card-text">liveCollections.ts</text>
+
+  <rect x="790" y="615" width="300" height="128" rx="24" fill="url(#card)" filter="url(#shadow)"/>
+  <text x="816" y="655" class="card-title">API recebe a coleta</text>
+  <text x="816" y="682" class="card-text">POST /api/collections/live</text>
+  <text x="816" y="704" class="card-text">Valida, normaliza e persiste</text>
+  <text x="816" y="726" class="card-text">server/index.js</text>
+
+  <rect x="1150" y="615" width="300" height="128" rx="24" fill="url(#card)" filter="url(#shadow)"/>
+  <text x="1176" y="655" class="card-title">Mapa recalcula o foco</text>
+  <text x="1176" y="682" class="card-text">Mescla API + cache local</text>
+  <text x="1176" y="704" class="card-text">Atualiza prioridade territorial</text>
+  <text x="1176" y="726" class="card-text">RiverMapPanel.tsx</text>
+
+  <line x1="370" y1="679" x2="430" y2="679" class="soft-line"/>
+  <line x1="730" y1="679" x2="790" y2="679" class="soft-line"/>
+  <line x1="1090" y1="679" x2="1150" y2="679" class="soft-line"/>
+
+  <text x="80" y="790" class="section">3. BANCO DE DADOS MYSQL</text>
+  <rect x="70" y="812" width="1480" height="108" rx="28" fill="#E7FCFF" filter="url(#shadow)"/>
+
+  <rect x="100" y="836" width="200" height="60" rx="18" fill="url(#accent)"/>
+  <text x="148" y="872" class="db-title">usuarios</text>
+
+  <rect x="330" y="836" width="220" height="60" rx="18" fill="url(#accent)"/>
+  <text x="364" y="872" class="db-title">comunidades</text>
+
+  <rect x="580" y="836" width="260" height="60" rx="18" fill="url(#accent)"/>
+  <text x="613" y="872" class="db-title">field_collections</text>
+
+  <rect x="870" y="836" width="270" height="60" rx="18" fill="url(#accent)"/>
+  <text x="891" y="872" class="db-title">clinical_patient_cases</text>
+
+  <rect x="1170" y="836" width="280" height="60" rx="18" fill="url(#accent)"/>
+  <text x="1193" y="872" class="db-title">clinical_case_actions</text>
+
+  <text x="103" y="912" class="db-text">acessos, perfis e login</text>
+  <text x="334" y="912" class="db-text">base territorial acompanhada</text>
+  <text x="583" y="912" class="db-text">coletas de campo, fotos e relatorio</text>
+  <text x="873" y="912" class="db-text">fila clinica e acompanhamento</text>
+  <text x="1173" y="912" class="db-text">historico de condutas e acoes</text>
+
+  <line x1="940" y1="743" x2="710" y2="836" class="dash-line"/>
+  <line x1="940" y1="743" x2="1005" y2="836" class="dash-line"/>
+  <line x1="1005" y1="896" x2="1170" y2="896" class="soft-line"/>
+
+  <text x="920" y="205" class="section">4. PAINEIS INTERNOS</text>
+  <rect x="900" y="225" width="250" height="105" rx="24" fill="url(#card)" filter="url(#shadow)"/>
+  <text x="925" y="264" class="card-title">Enfermagem</text>
+  <text x="925" y="291" class="card-text">Cria triagem e encaminha casos</text>
+  <text x="925" y="313" class="card-text">NurseView.tsx</text>
+
+  <rect x="1180" y="225" width="250" height="105" rx="24" fill="url(#card)" filter="url(#shadow)"/>
+  <text x="1205" y="264" class="card-title">Medico</text>
+  <text x="1205" y="291" class="card-text">Registra conduta, biomarcador</text>
+  <text x="1205" y="313" class="card-text">DoctorView.tsx</text>
+
+  <rect x="900" y="360" width="250" height="105" rx="24" fill="url(#card)" filter="url(#shadow)"/>
+  <text x="925" y="399" class="card-title">Morador</text>
+  <text x="925" y="426" class="card-text">Ve avisos, sinais e atendimentos</text>
+  <text x="925" y="448" class="card-text">PopulationView.tsx</text>
+
+  <rect x="1180" y="360" width="250" height="105" rx="24" fill="url(#card)" filter="url(#shadow)"/>
+  <text x="1205" y="399" class="card-title">Admin</text>
+  <text x="1205" y="426" class="card-text">Usuarios, banco e rastreabilidade</text>
+  <text x="1205" y="448" class="card-text">AdminPortalPage.tsx</text>
+
+  <line x1="580" y1="285" x2="900" y2="277" class="line"/>
+  <line x1="580" y1="360" x2="1180" y2="277" class="line"/>
+  <line x1="580" y1="435" x2="900" y2="412" class="line"/>
+  <line x1="580" y1="510" x2="1180" y2="412" class="line"/>
+
+  <text x="1328" y="156" class="small">fluxo funcional atual</text>
+  <text x="1328" y="176" class="small">front -> api -> mysql -> mapa</text>
+</svg>
