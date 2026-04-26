@@ -1,3 +1,4 @@
+// Mapeamento visual entre perfil de usuario e icone usado no portal.
 import { HeartPulse, ShieldUser, Stethoscope, TestTubeDiagonal, Users } from 'lucide-react'
 
 export const roleIcons = {

@@ -1,3 +1,5 @@
+// Entrada principal do frontend.
+// Garante que o tema seja aplicado antes da aplicacao React montar na tela.
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'

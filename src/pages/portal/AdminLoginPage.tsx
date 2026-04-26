@@ -1,3 +1,4 @@
+// Entrada administrativa separada do login comum, com fluxo proprio de acesso.
 import { useState, type FormEvent } from 'react'
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom'
 import { roleMeta } from '../../mockPortalData'

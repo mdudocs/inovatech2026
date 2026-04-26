@@ -1,3 +1,4 @@
+// Utilitarios de tema claro/escuro usados no arranque e no toggle global.
 export type ThemeMode = 'light' | 'dark'
 
 export const THEME_STORAGE_KEY = 'inovatech-theme'

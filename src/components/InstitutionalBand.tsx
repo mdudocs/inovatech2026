@@ -1,3 +1,4 @@
+// Faixa institucional exibida no final das paginas publicas com parceiros e atalhos.
 import { Link } from 'react-router-dom'
 import { footerColumns, institutionalPartners } from '../siteData'
 

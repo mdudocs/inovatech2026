@@ -1,3 +1,5 @@
+// Arquivo principal da API.
+// Concentra infraestrutura do MySQL, autenticacao, rotas e deploy do frontend compilado.
 import crypto from 'node:crypto'
 import { existsSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'

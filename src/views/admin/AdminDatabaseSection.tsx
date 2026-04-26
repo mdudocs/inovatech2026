@@ -1,3 +1,4 @@
+// Secao administrativa focada em saude do banco, tabelas e rastros operacionais.
 import { BellRing, Database } from 'lucide-react'
 import { RecentChangesPanel } from '../../components/admin/RecentChangesPanel'
 import { AlertList } from '../../components/portal/AlertList'

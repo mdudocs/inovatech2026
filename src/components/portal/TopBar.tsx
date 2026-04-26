@@ -1,3 +1,4 @@
+// Barra superior global do sistema com sessao atual, navegacao curta e alternancia de tema.
 import { LogOut, MoonStar, SunMedium } from 'lucide-react'
 import { Link, NavLink } from 'react-router-dom'
 import { AquaSafeLogo } from '../AquaSafeLogo'

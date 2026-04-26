@@ -1,3 +1,4 @@
+// Login principal dos perfis operacionais e comunitarios do sistema.
 import { useState, type FormEvent } from 'react'
 import { CheckCircle2, LifeBuoy, Send, X } from 'lucide-react'
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom'

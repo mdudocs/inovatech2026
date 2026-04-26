@@ -1,3 +1,4 @@
+// Navegacao entre as secoes da area administrativa.
 import { Database, LayoutDashboard, Users, type LucideIcon } from 'lucide-react'
 import { NavLink } from 'react-router-dom'
 import type { AdminSection } from '../../portalTypes'

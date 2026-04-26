@@ -1,3 +1,4 @@
+// Lista padronizada de alertas usada pelos diferentes perfis do portal.
 import { Link } from 'react-router-dom'
 import type { AlertItem } from '../../portalTypes'
 

@@ -1,3 +1,4 @@
+// Componente de marca usado no cabecalho e em pontos institucionais do sistema.
 type AquaSafeLogoProps = {
   size?: 'sm' | 'lg'
 }

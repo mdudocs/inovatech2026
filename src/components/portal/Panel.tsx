@@ -1,3 +1,5 @@
+// Card base das areas autenticadas.
+// Mantem consistencia visual entre medico, enfermagem, agente, morador e admin.
 import type { ReactNode } from 'react'
 
 export function Panel({

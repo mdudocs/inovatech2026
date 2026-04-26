@@ -1,3 +1,4 @@
+// Tela de pesquisa detalhada das coletas, com filtros e abertura de historico.
 import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import {
   Camera,
