@@ -11,6 +11,8 @@ import { isUserRole } from '../../utils/portalSession'
 import { DashboardBody } from '../../views/dashboard/DashboardBody'
 
 export function PortalPage({ session }: { session: AuthSession | null }) {
+  // Esta pagina e o shell do portal autenticado.
+  // Ela valida perfil, carrega o dashboard correto e entrega o controle para a view do papel ativo.
   const { role } = useParams()
   const [dashboard, setDashboard] = useState<PortalDashboard | null>(null)
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading')
@@ -25,6 +27,8 @@ export function PortalPage({ session }: { session: AuthSession | null }) {
     let active = true
 
     async function loadDashboard() {
+      // O dashboard sempre vem da role da sessao atual,
+      // nao apenas do parametro da URL, para evitar acesso cruzado entre perfis.
       setStatus('loading')
       setError('')
 

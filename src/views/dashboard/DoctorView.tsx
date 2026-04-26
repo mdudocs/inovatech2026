@@ -46,6 +46,8 @@ export function DoctorView({
   token: string
   initialTerritory: string
 }) {
+  // A view medica junta filtro territorial, fila de casos
+  // e registro de conduta no mesmo espaco de trabalho.
   const [cases, setCases] = useState<DoctorCase[]>(data.cases)
   const [activeCaseId, setActiveCaseId] = useState(cases[0]?.id ?? '')
   const [selectedTerritory, setSelectedTerritory] = useState(ALL_TERRITORIES)
@@ -71,6 +73,8 @@ export function DoctorView({
     selectedTerritory === ALL_TERRITORIES ? undefined : selectedTerritory
 
   function buildDoctorNote() {
+    // A nota final consolida campos estruturados e observacao livre
+    // para persistir uma conduta mais legivel no backend.
     return [
       clinicalNote.trim(),
       carePlan.assessment ? `Avaliacao clinica: ${carePlan.assessment}` : '',
@@ -86,6 +90,8 @@ export function DoctorView({
       return
     }
 
+    // Cada acao clinica reutiliza o mesmo endpoint, mudando apenas
+    // o tipo de acao e a nota consolidada.
     setPendingAction(action)
     setActionError('')
     setActionSuccess('')

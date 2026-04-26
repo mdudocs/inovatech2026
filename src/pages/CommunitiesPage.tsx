@@ -5,9 +5,13 @@ import { communityRows, priorityCommunities, riskLabel } from '../siteData'
 type CommunityFilter = 'all' | 'critical' | 'high' | 'other'
 
 export function CommunitiesPage() {
+  // Aqui juntamos a leitura territorial resumida, o mapa real
+  // e a tabela consolidada das comunidades monitoradas.
   const [filter, setFilter] = useState<CommunityFilter>('all')
 
   const filteredRows = communityRows.filter((row) => {
+    // O filtro e propositalmente simples para facilitar consulta rapida
+    // por pessoas nao tecnicas dentro da equipe.
     if (filter === 'all') {
       return true
     }

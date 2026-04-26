@@ -11,6 +11,8 @@ export function PopulationView({
   data: PopulationDashboard
   token: string
 }) {
+  // Esta e a visao mais simples do sistema: comunicados, sinais observados,
+  // atendimentos e leitura comunitaria do territorio.
   return (
     <>
       <section className="dashboard-grid">

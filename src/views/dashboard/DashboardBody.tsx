@@ -13,6 +13,8 @@ export function DashboardBody({
   token: string
   userTerritory: string
 }) {
+  // Este arquivo funciona como um seletor de view por perfil.
+  // O PortalPage carrega o dashboard e aqui escolhemos qual interface renderizar.
   if (dashboard.kind === 'population') {
     return <PopulationView data={dashboard} token={token} />
   }

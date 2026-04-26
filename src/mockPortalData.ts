@@ -9,6 +9,8 @@ import type {
   UserRole,
 } from './portalTypes'
 
+// roleMeta descreve como cada perfil aparece no frontend:
+// nome, credencial esperada e rota principal depois do login.
 export const roleMeta: Record<UserRole, RoleMeta> = {
   population: {
     label: 'Morador ribeirinho',
@@ -52,6 +54,8 @@ export const roleMeta: Record<UserRole, RoleMeta> = {
   },
 }
 
+// Contas de demonstracao usadas quando o frontend roda em modo mock
+// ou quando a equipe quer validar interface sem depender do banco.
 export const demoAccounts: DemoAccount[] = [
   {
     id: 'u-pop-01',
@@ -95,6 +99,7 @@ export const demoAccounts: DemoAccount[] = [
   },
 ]
 
+// Resumo rapido da proposta tecnica de integracao com banco.
 export const mysqlBlueprint = [
   {
     title: 'Base preparada',
@@ -113,6 +118,8 @@ export const mysqlBlueprint = [
   },
 ]
 
+// Este objeto alimenta o sistema inteiro em modo mock.
+// Serve tanto para demo quanto para desenvolvimento sem API.
 export const dashboardMocks: DashboardByRole = {
   population: {
     kind: 'population',

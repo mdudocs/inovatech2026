@@ -1,9 +1,12 @@
+// Este arquivo concentra os contratos principais do frontend.
+// A ideia e que telas, mocks e API compartilhem os mesmos formatos.
 export type ThemeTone = 'teal' | 'gold' | 'coral' | 'slate'
 export type UserRole = 'population' | 'nurse' | 'doctor' | 'collector' | 'admin'
 export type SourceMode = 'mock' | 'api'
 export type AlertLevel = 'critical' | 'attention' | 'stable'
 export type AdminSection = 'visao-geral' | 'usuarios' | 'banco'
 
+// Metadados fixos de cada perfil para labels, descricao e rota inicial.
 export type RoleMeta = {
   label: string
   shortLabel: string
@@ -41,6 +44,7 @@ export type LoginPayload = {
   accessKey?: string
 }
 
+// Cartao de indicador reutilizado em varios paineis internos.
 export type MetricCard = {
   label: string
   value: string
@@ -84,6 +88,7 @@ export type PopulationDashboard = {
   supportPoints: SupportPoint[]
 }
 
+// Caso clinico e o modelo central usado por medicina e enfermagem.
 export type DoctorCase = {
   id: string
   patient: string
@@ -156,6 +161,7 @@ export type DoctorDashboard = {
   territoryNotes: string[]
 }
 
+// Estruturas usadas pelo painel operacional do agente de campo.
 export type CollectorRouteStop = {
   stop: string
   eta: string
@@ -260,6 +266,7 @@ export type AdminDashboard = {
   kind: 'admin'
 } & AdminOverviewDashboard
 
+// Mapa final de resposta por perfil para garantir tipagem de dashboard.
 export type DashboardByRole = {
   population: PopulationDashboard
   nurse: NurseDashboard

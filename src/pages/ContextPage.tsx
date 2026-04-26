@@ -15,6 +15,8 @@ const stepAccents = {
 }
 
 export function ContextPage() {
+  // Esta pagina traduz o material conceitual do projeto em leitura publica:
+  // problema, impacto territorial e desenho do monitoramento.
   return (
     <>
       <section className="page-hero">
