@@ -4,6 +4,7 @@ import { SESSION_STORAGE_KEY } from '../services/portalApi'
 export function isUserRole(value: string | undefined): value is UserRole {
   return (
     value === 'population' ||
+    value === 'nurse' ||
     value === 'doctor' ||
     value === 'collector' ||
     value === 'admin'

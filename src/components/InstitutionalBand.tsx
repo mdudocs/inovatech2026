@@ -22,7 +22,7 @@ export function InstitutionalBand() {
 
       <footer className="site-footer">
         <div className="footer-brand">
-          <strong>Inovatech 2026</strong>
+          <strong>AquaSafe</strong>
           <p>
             Plataforma preditiva de saude publica para monitoramento de
             mercurio e analise de risco de intoxicacao em comunidades

@@ -1,5 +1,6 @@
-import { Droplets, LogOut, MoonStar, SunMedium } from 'lucide-react'
+import { LogOut, MoonStar, SunMedium } from 'lucide-react'
 import { Link, NavLink } from 'react-router-dom'
+import { AquaSafeLogo } from '../AquaSafeLogo'
 import { roleMeta } from '../../mockPortalData'
 import type { AuthSession } from '../../portalTypes'
 import type { ThemeMode } from '../../theme'
@@ -18,18 +19,19 @@ export function TopBar({
   return (
     <header className="topbar">
       <Link className="brand" to="/">
-        <span className="brand-mark">
-          <Droplets size={18} />
-        </span>
+        <AquaSafeLogo />
         <span>
-          <strong>Inovatech Mercury Care</strong>
-          <small>Sistema informativo para populacao, medico e coleta</small>
+          <strong>AquaSafe</strong>
+          <small>Monitoramento de agua, mercurio e cuidado territorial</small>
         </span>
       </Link>
 
       {session ? (
         <nav className="topnav" aria-label="Principal">
           <NavLink to={roleMeta[session.user.role].route}>Meu portal</NavLink>
+          {session.user.role !== 'population' ? (
+            <NavLink to="/portal/coletas">Coletas</NavLink>
+          ) : null}
         </nav>
       ) : null}
 

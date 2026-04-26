@@ -104,12 +104,18 @@ export function PortalPage({ session }: { session: AuthSession | null }) {
 
         <div className="portal-meta">
           <InfoPill label="Usuario" value={session.user.name} />
-          <InfoPill label="Territorio" value={session.user.territory} />
+          {session.user.role === 'doctor' ? (
+            <InfoPill label="Territorio inicial" value={session.user.territory} />
+          ) : null}
         </div>
       </section>
 
       <MetricSection items={dashboard.stats} />
-      <DashboardBody dashboard={dashboard} />
+      <DashboardBody
+        dashboard={dashboard}
+        token={session.token}
+        userTerritory={session.user.territory}
+      />
     </div>
   )
 }

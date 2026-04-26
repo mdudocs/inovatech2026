@@ -13,6 +13,14 @@ export const landingCards: Array<{
     ],
   },
   {
+    role: 'nurse',
+    points: [
+      'Fila de triagem',
+      'Classificacao de prioridade',
+      'Encaminhamento ao medico',
+    ],
+  },
+  {
     role: 'doctor',
     points: [
       'Casos mais urgentes do dia',

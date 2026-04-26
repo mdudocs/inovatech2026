@@ -7,7 +7,7 @@ import {
   ShieldAlert,
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { RiverMapPanel } from '../components/RiverMapPanel'
+import { LazyRiverMapPanel } from '../components/LazyRiverMapPanel'
 import {
   priorityCommunities,
   quickAccessCards,
@@ -242,7 +242,7 @@ export function HomePage() {
           </p>
         </div>
 
-        <RiverMapPanel />
+        <LazyRiverMapPanel />
       </section>
 
       <section className="section" id="ciencia">

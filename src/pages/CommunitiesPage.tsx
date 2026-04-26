@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { RiverMapPanel } from '../components/RiverMapPanel'
+import { LazyRiverMapPanel } from '../components/LazyRiverMapPanel'
 import { communityRows, priorityCommunities, riskLabel } from '../siteData'
 
 type CommunityFilter = 'all' | 'critical' | 'high' | 'other'
@@ -69,7 +69,7 @@ export function CommunitiesPage() {
           </p>
         </div>
 
-        <RiverMapPanel mode="community" />
+        <LazyRiverMapPanel mode="community" />
       </section>
 
       <section className="section">
