@@ -358,32 +358,32 @@ async function seedCoreData() {
   if ((userRows[0]?.total ?? 0) === 0) {
     const seedUsers = [
       [
-        'Maria do Carmo',
+        'Usuario Morador Demo',
         'population',
-        '111.111.111-11',
+        'MORADOR-DEMO-001',
         getSeedPassword('SEED_POPULATION_PASSWORD'),
-        'Comunidade Sao Tome - Baixo Rio Negro',
+        'Comunidade Demo - Setor Ribeirinho',
       ],
       [
-        'Dra. Ana Ribeiro',
+        'Medica Demo',
         'doctor',
-        'CRM-AM 10234',
+        'CRM-DEMO-001',
         getSeedPassword('SEED_DOCTOR_PASSWORD'),
-        'UBS Fluvial Rio Negro',
+        'Unidade Demo de Saude',
       ],
       [
-        'Tec. Enf. Carla Mendes',
+        'Enfermagem Demo',
         'nurse',
-        'ENF-310',
+        'ENF-DEMO-001',
         getSeedPassword('SEED_NURSE_PASSWORD'),
-        'UBS Fluvial Rio Negro',
+        'Unidade Demo de Saude',
       ],
       [
-        'Joao Batista',
+        'Agente de Campo Demo',
         'collector',
-        'AGT-204',
+        'AGT-DEMO-001',
         getSeedPassword('SEED_COLLECTOR_PASSWORD'),
-        'Equipe de campo - Trecho Manaus / Barcelos',
+        'Equipe de campo demo',
       ],
       [
         'Administrador AquaSafe',
@@ -420,11 +420,11 @@ async function seedCoreData() {
       `INSERT IGNORE INTO usuarios (nome, perfil, identificador_login, senha, territorio, ativo)
        VALUES (?, ?, ?, ?, ?, 1)`,
       [
-      'Tec. Enf. Carla Mendes',
+      'Enfermagem Demo',
       'nurse',
-      'ENF-310',
+      'ENF-DEMO-001',
       hashPassword(nurseSeedPassword),
-      'UBS Fluvial Rio Negro',
+      'Unidade Demo de Saude',
       ],
     )
   }

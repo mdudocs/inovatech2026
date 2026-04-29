@@ -8,7 +8,7 @@ Este arquivo resume o banco em duas visoes:
 Isso e importante porque hoje o projeto mistura:
 
 - tabelas realmente usadas pela API em `server/index.js`
-- um schema base mais normalizado guardado em `database/inovatech_mysql_schema.sql`
+- um schema base mais normalizado descrito nesta documentacao
 
 ## Imagem pronta para apresentacao
 
@@ -176,7 +176,7 @@ erDiagram
 
 ## 2. Schema base normalizado/proposto
 
-Este schema aparece em `database/inovatech_mysql_schema.sql` e representa uma modelagem mais relacional.
+Este schema representa uma modelagem mais relacional proposta para evolucao do banco.
 
 ## Diagrama ER do schema base normalizado
 
