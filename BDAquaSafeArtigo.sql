@@ -1,0 +1,279 @@
+
+DROP DATABASE IF EXISTS MercurioRioNegro;
+
+CREATE DATABASE IF NOT EXISTS MercurioRioNegro;
+
+USE MercurioRioNegro;
+
+CREATE TABLE Pesquisadores (
+    id_pesquisador INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    instituicao VARCHAR(255),
+    especialidade_tema TEXT,
+    periodo_maior_atividade VARCHAR(100),
+    parceiros_principais TEXT,
+    observacao TEXT
+);
+
+INSERT INTO Pesquisadores (nome, instituicao, especialidade_tema, periodo_maior_atividade, 
+parceiros_principais, observacao) VALUES
+
+(
+    'Pedro de Magalhães Padilha', 
+    'UNESP Botucatu / FINEP', 
+    'Metaloproteômica do Hg em peixes amazônicos; biomarcadores de toxicidade; espécies Cichla (tucunaré)
+     e Mylossoma (pacu) do médio Rio Negro', 
+    '2015–2025 (resultados finais em 2025)', 
+    'Zara LF, Sargentini Jr., Buzalaf MAR, Dórea JG', 
+    'Projeto FINEP ativo com resultados parciais publicados 2023; dados do Rio Negro central para o projeto'
+),
+
+(
+    'Ézio Sargentini Junior', 
+    'INPA / UFAM', 
+    'Substâncias húmicas aquáticas; dinâmica do Hg em rios e reservatórios; bioacumulação de metais-traço; Balbina e Rio Negro', 
+    '2000–presente', 
+    'Zara LF, Jardim WF, Bolson MA, Kasper D', 
+    'Pesquisador sênior do INPA; co-autor em estudos de sedimento e especiação do Hg na bacia do Negro'
+),
+
+(
+    'Luiz Fabrício Zara', 
+    'UNB / UFAM (colaborador)', 
+    'Especiação Hg; interações Hg-substâncias húmicas; metaloproteômica; Balbina; Madeira; Rio Negro', 
+    '2001–presente', 
+    'Sargentini Jr., Padilha PM, Dórea JG, Bernardi JVE', 
+    'Doutorado no Rio Negro; estudos de sedimento Balbina (Oliveira et al. 2021); biomarkers em Arapaima gigas'
+),
+
+(
+    'Wilson de Figueiredo Jardim', 
+    'UNICAMP (aposentado 2017; publicações ativas)', 
+    'Química ambiental do Hg; fotoquímica redox em águas pretas; ciclo do Hg na bacia do Rio Negro; Projeto Temático FAPESP', 
+    '1998–2017 (linha de base fundamental)', 
+    'Bisinoti MC, Fadini PS, Sargentini Jr., Barbosa AC, Dórea JG', 
+    'Referência seminal para toda a pesquisa de Hg no Rio Negro; projeto FAPESP Temático gerou dezenas de publicações'
+),
+
+(
+    'Sérgio Duvoisin Júnior', 
+    'UEA – Universidade do Estado do Amazonas (QAT)', 
+    'Qualidade de água (138 parâmetros); primeiro IQA para rios amazônicos de águas pretas; monitoramento Rio Negro e Madeira; 
+     parcerias com Harvard (Sunderland Lab)', 
+    '2019–presente (expedições ativas)', 
+    'Routhier E, Haque F, Sunderland E (Harvard), Nobre A, Souza R', 
+    'Liderou campanhas OXIOUUWI 2023 e 2024; IQA apresentado ao Conselho Estadual de Recursos Hídricos AM em mar/2024'
+);
+
+CREATE TABLE Comunidades (
+    id_comunidade INT AUTO_INCREMENT PRIMARY KEY,
+    municipio_comunidade VARCHAR(255) NOT NULL,
+    trecho_rio_negro VARCHAR(255),
+    populacao_estimada VARCHAR(100),
+    principais_especies_consumidas TEXT,
+    risco_exposicao_hg VARCHAR(255),
+    estudos_cobertura TEXT,
+    fonte_observacao TEXT
+);
+
+INSERT INTO Comunidades (municipio_comunidade, trecho_rio_negro, populacao_estimada, 
+principais_especies_consumidas, risco_exposicao_hg, estudos_cobertura, fonte_observacao) VALUES
+
+(
+    'Manaus (periferia ribeirinha + igarapés)', 
+    'Baixo Rio Negro – confluência com Solimões', 
+    '~2.219.580', 
+    'Tucunaré, jaraqui, tambaqui, matrinxã', 
+    'MÉDIO-ALTO – peixes urbanos com Hg acima do limite em ~20% das amostras', 
+    'HG-2023-004; HG-2024-002; HG-2024-008', 
+    'Fiocruz 2023; UEA 2024 – consumo de peixe regional; igarapés urbanos degradados (Tarumã-Açu)'
+),
+
+(
+    'Novo Airão', 
+    'Baixo-Médio Rio Negro (~200 km de Manaus)', 
+    '~18.000', 
+    'Tucunaré (Cichla spp.), jaraqui, pacu, surubim', 
+    'ALTO – espécie predadora tucunaré com Hg > limite em indivíduos adultos (Padilha 2023)', 
+    'HG-2023-001; HG-2023-003; HG-2024-010', 
+    'Campanha OXIOUUWI set/2023; coleta de sedimento e peixe (Harvard/UEA)'
+),
+
+(
+    'Barcelos (inclui distrito Moura, ~200 famílias)', 
+    'Médio Rio Negro (~400 km de Manaus)', 
+    '~27.000', 
+    'Jaraqui, tucunaré, pacu, aruanã, tambaqui', 
+    'ALTO – comunidade de Moura identificada nas coletas OXIOUUWI; pesca de subsistência diária', 
+    'HG-2023-001; HG-2024-002; HG-2024-008; HG-2024-010', 
+    'Coleta de peixes consumidos localmente (Routhier/Duvoisin); maior arquipélago fluvial do mundo (Mariuá)'
+),
+
+(
+    'Santa Isabel do Rio Negro', 
+    'Alto Rio Negro (~750 km de Manaus)', 
+    '~17.000 (98% floresta primária)', 
+    'Tucunaré, jaraqui, matrinxã, espécies indígenas', 
+    'ALTO – coleta-alvo da campanha OXIOUUWI; pH muito ácido (~4.5) favorece metilação do Hg', 
+    'HG-2023-001; HG-2024-008; HG-2024-010', 
+    'Ponto-limite da 1ª Campanha OXIOUUWI; monitoramento previsto estação cheia 2024'
+),
+
+(
+    'São Gabriel da Cachoeira (TI Alto Rio Negro)', 
+    'Alto Rio Negro (~850 km de Manaus)', 
+    '~47.000 (maioria indígena)', 
+    'Peixes locais (diversas etnias Yanomami e outros)', 
+    'MUITO ALTO – maior concentração de povos indígenas; consumo >95% de peixe local; Hg em cabelo identificado em estudos anteriores', 
+    'HG-2023-009 (Fiocruz, regional)', 
+    'Nota Técnica Fiocruz 2023; em breve coberto por expansão da campanha OXIOUUWI (planejada)'
+),
+
+(
+    'Presidente Figueiredo (entorno Balbina)', 
+    'Afluente Uatumã – tributário do Negro', 
+    '~33.000', 
+    'Tucunaré, jaraqui, tambaqui (lago Balbina)', 
+    'MÉDIO – sedimento de Balbina com Hg 0.03–0.28 µg/g ps; peixes do lago com potencial bioacumulação', 
+    'HG-2021-006 (Oliveira/Zara/Sargentini Jr.)', 
+    'Reservatório de Balbina: monitoramento plurianual 2016–2019; continuação em análise'
+),
+
+(
+    'Comunidades ribeirinhas do Baixo Rio Negro (34 identificadas)', 
+    'Baixo Rio Negro – Manaus e arredores', 
+    '~5.000 (estimativa 34 comunidades)', 
+    'Peixe local (pesca de subsistência)', 
+    'MUITO ALTO durante seca – 32/34 comunidades ficaram sem acesso direto ao rio na seca extrema 2023', 
+    'HG-2024-011', 
+    'Estudo ResearchGate/Mongabay 2024: seca 2023 deixou média de 834 m de distância ao rio; 13 comunidades a >1km'
+);
+
+
+
+CREATE TABLE Registros_Mercuario (
+    id_registo VARCHAR(50) PRIMARY KEY, 
+    autores_principais VARCHAR(255),
+    ano INT,
+    titulo_fonte TEXT,
+    doi_link TEXT,
+    trecho_municipio VARCHAR(255),
+    latitude DECIMAL(10, 6),   
+    longitude DECIMAL(10, 6),  
+    matriz_amostral VARCHAR(100),
+    especie_compartimento VARCHAR(255),
+    n_amostras INT,
+    periodo_coleta VARCHAR(100),
+    hg_total_peso_seco VARCHAR(100), 
+    hg_total_agua VARCHAR(100),     
+    forma_hg VARCHAR(255),
+    supera_limite_oms_anvisa VARCHAR(255),
+    tecnica_analitica VARCHAR(255),
+    controle_qualidade_mrc VARCHAR(255),
+    comunidades_municipios_abastecidos TEXT,
+    num_est_populacao_exposta VARCHAR(255)
+);
+
+INSERT INTO Registros_Mercuario (
+    id_registo, autores_principais, ano, titulo_fonte, doi_link, 
+    trecho_municipio, latitude, longitude, matriz_amostral, 
+    especie_compartimento, n_amostras, periodo_coleta, 
+    hg_total_peso_seco, hg_total_agua, forma_hg, 
+    supera_limite_oms_anvisa, tecnica_analitica, 
+    controle_qualidade_mrc, comunidades_municipios_abastecidos, 
+    num_est_populacao_exposta
+) VALUES
+(
+    'HG-2023-001', 
+    'Duvoisin Jr., S.; Routhier, E.; Haque, F.; Sunderland, E.; Souza, R. (UEA/Harvard)', 
+    2023, 
+    'Campanha OXIOUUWI – 1ª Expedição de Monitoramento da Qualidade das Águas do Rio Negro (UEA/Harvard)', 
+    'https://seas.harvard.edu/news/2024/02/deep-amazon-seas-team-tracks-mercury', 
+    'Manaus → Santa Isabel do Rio Negro (700 km, 50 pontos)', 
+    -3.10, -60.01,
+    'Água superficial / Sedimento / Solo ripário / Peixe', 
+    'Água (total + MeHg); sedimento leito; solos margem; peixes consumidos localmente', 
+    50, 
+    'Set/2023 (estação seca extrema – El Niño)', 
+    NULL, 
+    'Variável por ponto; primeiros dados para IQA Amazônico', 
+    'Hg total + MeHg (especiação)', 
+    'Dados preliminares – limites ainda não publicados', 
+    'CV-AFS / ICP-MS', 
+    'EPA 1631E; MRC NIST 1641d', 
+    'Novo Airão, Barcelos (distrito Moura ~200 fam.), Santa Isabel do Rio Negro, comunidades ao longo do eixo Manaus–SIRN', 
+    '~50.000 (estimativa eixo fluvial)'
+),
+
+(
+    'HG-2024-002', 
+    'Duvoisin Jr., S.; Nobre, A.; Vieira, F.; Equipe GP-QAT/UEA', 
+    2024, 
+    '4ª Expedição OXIOUUWI - IQA Rios Amazônicos de Águas Pretas (Rio Negro) e Contaminação por Hg no Madeira', 
+    'https://agenciabrasil.ebc.com.br/radioagencia-nacional/meio-ambiente/audio/2024-11/
+     contaminacao-por-mercurio-de-peixes-do-madeira-e-o-dobro-do-aceitavel', 
+    'Manaus → Santa Isabel do Rio Negro (Negro); Manaus → Humaitá (Madeira)', 
+    -3.10, -60.01, 
+    'Peixe (músculo) + Água superficial', 
+    'Jaraqui (Semaprochilodus spp.) – espécie base alimentar; múltiplas espécies', 
+    200, 
+    'Set/2024', 
+    '~0.95 (jaraqui – quase 2x limite ANVISA)', 
+    NULL, 
+    'Hg total', 
+    'SIM – jaraqui ≈ 2× o limite de 0,5 mg/kg (ANVISA/OMS)', 
+    'CVAAS / CV-AFS', 
+    'Padrões CONAMA; DORM-3', 
+    'Barcelos, Novo Airão, Santa Isabel do Rio Negro, comunidades ribeirinhas e indígenas ao longo do eixo', 
+    '~80.000 (estimativa cidades e comunidades do médio e alto Rio Negro)'
+),
+(
+    'HG-2023-003', 
+    'Camargo Filho, R.F.; Padilha, P.M. et al. (UNESP Botucatu / FINEP)', 
+    2023, 
+    'Mercury and selenium in muscle tissue of Cichla ssp. and Mylossoma spp. from the middle Rio Negro/AM – metalloproteomic approach', 
+    'https://repositorio.unesp.br/server/api/core/bitstreams/f8467960-479b-49a0-93a4-fe7d61198702/content', 
+    'Médio Rio Negro – AM (próximo a Barcelos/Novo Airão)', 
+    -1.5, -61.0, 
+    'Peixe – músculo', 
+    'Cichla ssp. (tucunaré – carnívoro); Mylossoma spp. (pacu – herbívoro)', 
+    80, 
+    '2022–2023 (protocolo CEUA 326/2023)', 
+    'Tucunaré: >0,5 (predador > pacu); pacu < 0,5', 
+    NULL, 
+    'Hg total + Se (razão molar Hg:Se)', 
+    'SIM (tucunaré predador em indivíduos maiores)', 
+    'GFAAS + ICP-OES', 
+    'MRC DORM-2; IAEA-085', 
+    'Barcelos, Novo Airão – populações que consomem tucunaré e pacu do médio Rio Negro', 
+    '~25.000 (municípios de Barcelos e Novo Airão)'
+),
+
+(
+    'HG-2023-004', 
+    'Padilha, P.M. (coord.); colaboradores FINEP/UNESP', 
+     2023, 
+    'Estudo analisa mercúrio em organismos contaminados na Amazônia – resultados parciais (até 2025)', 
+    'https://agenciabrasil.ebc.com.br/radioagencia-nacional/meio-ambiente/audio/2023-11/
+     estudo-analisa-mercurio-em-organismos-contaminados-na-amazonia', 
+    'Bacia Amazônica – inclui Rio Negro (menos impactado diretamente)', 
+    -NULL, NULL, 
+    'Peixe (músculo) – múltiplas espécies', 
+    'Múltiplas espécies comerciais; ênfase em peixes dos centros urbanos da Amazônia', 
+    NULL, 
+    '2021–2023 (resultados finais previstos 2025)', 
+    '~20% das amostras acima do limite OMS/ANVISA', 
+    NULL, 
+    'Hg total', 
+    'SIM – 1 em cada 5 peixes acima do limite recomendado', 
+    'CVAAS / GFAAS', 
+    'Padrões NRC', 
+    'Centros urbanos da Amazônia e comunidades ribeirinhas – inclusive eixo Rio Negro', 
+    'Milhões de consumidores (escala regional)'
+);
+
+SELECT * FROM Pesquisadores;
+
+SELECT * FROM Comunidades;
+
+SELECT * FROM Registros_Mercuario;

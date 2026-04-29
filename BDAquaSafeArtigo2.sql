@@ -1,0 +1,410 @@
+
+DROP DATABASE IF EXISTS MercurioRioNegro;
+
+CREATE DATABASE IF NOT EXISTS MercurioRioNegro;
+
+USE MercurioRioNegro;
+
+CREATE TABLE Usuario (
+    id_usuario INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    email VARCHAR(191) NOT NULL UNIQUE,     
+    senha VARCHAR(255) NOT NULL,       
+    nivel_acesso ENUM('Comum', 'Medico', 'Pesquisador', 'Admin') DEFAULT 'Comum',
+    data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status_conta ENUM('Ativo', 'Inativo', 'Bloqueado') DEFAULT 'Ativo'
+);
+
+INSERT INTO Usuario (nome, email, senha, nivel_acesso) 
+VALUES (
+    'Admin do Sistema', 
+    'admin@mercuriorionegro.org', 
+    '111aaa', 
+    'Admin'
+),
+
+(
+    'Natalia Lima', 
+    'natalia@clinicamedica.com', 
+    '222bbb', 
+    'Medico'
+),
+
+(
+    'Sofia Guerra', 
+    'sofiaguerra@clinicamedica.com', 
+    '333ccc', 
+    'Medico'
+),
+
+(
+    'Pedro de Magalhães', 
+    'pedro@gmail.com', 
+    '444ddd', 
+    'Pesquisador'
+),
+
+(
+    'Ézio Sargentini', 
+    'ezio@gmail.com', 
+    '555eee', 
+    'Pesquisador'
+);
+
+
+
+-- Tabela Pesquisadores atualizada (campos removidos)
+CREATE TABLE Pesquisadores (
+    id_pesquisador INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    instituicao VARCHAR(255),
+    especialidade_tema TEXT,
+    email VARCHAR(255),
+    cpf VARCHAR(255) UNIQUE,
+    endereco VARCHAR(255),
+    data_nasc DATE,
+    rg VARCHAR(255)
+    
+    
+);
+
+INSERT INTO Pesquisadores (nome, instituicao, especialidade_tema, email, cpf, endereco, data_nasc, rg) VALUES
+(
+    'Pedro de Magalhães Padilha', 
+    'UNESP Botucatu / FINEP', 
+    'Metaloproteômica do Hg em peixes amazônicos; biomarcadores de toxicidade; espécies Cichla (tucunaré) e Mylossoma (pacu) do médio Rio Negro',
+    'pedro@gmail.com',
+    '111-111-111-00',
+    'Rua 123 Manaus',
+    '2001-01-01',
+    '11-111-111-1'
+),
+
+(
+    'Ézio Sargentini Junior', 
+    'INPA / UFAM', 
+    'Substâncias húmicas aquáticas; dinâmica do Hg em rios e reservatórios; bioacumulação de metais-traço; Balbina e Rio Negro',
+    'ezio@gmail.com',
+    '222-222-222-00',
+    'Rua 456 Manaus',
+    '2002-02-02',
+    '22-222-222-2'
+),
+
+(
+    'Luiz Fabrício Zara', 
+    'UNB / UFAM (colaborador)', 
+    'Especiação Hg; interações Hg-substâncias húmicas; metaloproteômica; Balbina; Madeira; Rio Negro',
+    'luiz@gmail.com',
+    '333-333-333-00',
+    'Rua 345 Manaus',
+    '2003-03-03',
+    '33-333-333-3'
+),
+(
+    'Wilson de Figueiredo Jardim', 
+    'UNICAMP (aposentado 2017; publicações ativas)', 
+    'Química ambiental do Hg; fotoquímica redox em águas pretas; ciclo do Hg na bacia do Rio Negro; Projeto Temático FAPESP',
+    'wilson@gmail.com',
+    '444-444-444-00',
+    'Rua 567 Manaus',
+    '2004-04-04',
+    '44-444-444-4'
+);
+
+CREATE TABLE Comunidades (
+    id_comunidade INT AUTO_INCREMENT PRIMARY KEY,
+    municipio_comunidade VARCHAR(255) NOT NULL,
+    trecho_rio_negro VARCHAR(255),
+    populacao_estimada VARCHAR(100),
+    principais_especies_consumidas TEXT,
+    risco_exposicao_hg VARCHAR(255)
+);
+
+INSERT INTO Comunidades (municipio_comunidade, trecho_rio_negro, populacao_estimada, 
+principais_especies_consumidas, risco_exposicao_hg) VALUES
+(
+    'Manaus (periferia ribeirinha + igarapés)', 
+    'Baixo Rio Negro – confluência com Solimões', 
+    '~2.219.580', 
+    'Tucunaré, jaraqui, tambaqui, matrinxã', 
+    'MÉDIO-ALTO – peixes urbanos com Hg acima do limite em ~20% das amostras'
+),
+(
+    'Novo Airão', 
+    'Baixo-Médio Rio Negro (~200 km de Manaus)', 
+    '~18.000', 
+    'Tucunaré (Cichla spp.), jaraqui, pacu, surubim', 
+    'ALTO – espécie predadora tucunaré com Hg > limite em indivíduos adultos (Padilha 2023)'
+),
+(
+    'Barcelos (inclui distrito Moura, ~200 famílias)', 
+    'Médio Rio Negro (~400 km de Manaus)', 
+    '~27.000', 
+    'Jaraqui, tucunaré, pacu, aruanã, tambaqui', 
+    'ALTO – comunidade de Moura identificada nas coletas OXIOUUWI; pesca de subsistência diária'
+),
+(
+    'Santa Isabel do Rio Negro', 
+    'Alto Rio Negro (~750 km de Manaus)', 
+    '~17.000 (98% floresta primária)', 
+    'Tucunaré, jaraqui, matrinxã, espécies indígenas', 
+    'ALTO – coleta-alvo da campanha OXIOUUWI; pH muito ácido (~4.5) favorece metilação do Hg'
+),
+(
+    'São Gabriel da Cachoeira (TI Alto Rio Negro)', 
+    'Alto Rio Negro (~850 km de Manaus)', 
+    '~47.000 (maioria indígena)', 
+    'Peixes locais (diversas etnias Yanomami e outros)', 
+    'MUITO ALTO – maior concentração de povos indígenas; consumo >95% de peixe local; Hg em cabelo identificado em estudos anteriores'
+),
+(
+    'Presidente Figueiredo (entorno Balbina)', 
+    'Afluente Uatumã – tributário do Negro', 
+    '~33.000', 
+    'Tucunaré, jaraqui, tambaqui (lago Balbina)', 
+    'MÉDIO – sedimento de Balbina com Hg 0.03–0.28 µg/g ps; peixes do lago com potencial bioacumulação'
+),
+(
+    'Comunidades ribeirinhas do Baixo Rio Negro (34 identificadas)', 
+    'Baixo Rio Negro – Manaus e arredores', 
+    '~5.000 (estimativa 34 comunidades)', 
+    'Peixe local (pesca de subsistência)', 
+    'MUITO ALTO durante seca – 32/34 comunidades ficaram sem acesso direto ao rio na seca extrema 2023'
+);
+
+
+
+CREATE TABLE RegistrosMercuario (
+    id_registo VARCHAR(50) PRIMARY KEY, 
+    id_pesq int,
+    ano INT,
+    titulo_fonte TEXT,
+    doi_link TEXT,
+    trecho_municipio VARCHAR(255),
+    latitude DECIMAL(10, 6),   
+    longitude DECIMAL(10, 6),  
+    matriz_amostral VARCHAR(100),
+    especie_compartimento VARCHAR(255),
+    n_amostras INT,
+    periodo_coleta VARCHAR(100),
+    hg_total_peso_seco VARCHAR(100), 
+    hg_total_agua VARCHAR(100),     
+    forma_hg VARCHAR(255),
+    supera_limite_oms_anvisa VARCHAR(255),
+    tecnica_analitica VARCHAR(255),
+    controle_qualidade_mrc VARCHAR(255),
+    comunidades_municipios_abastecidos TEXT,
+    num_est_populacao_exposta VARCHAR(255),
+    FOREIGN KEY (id_pesq) REFERENCES Pesquisadores (id_pesquisador)
+);
+
+INSERT INTO RegistrosMercuario (
+    id_registo, id_pesq, ano, titulo_fonte, doi_link, 
+    trecho_municipio, latitude, longitude, matriz_amostral, 
+    especie_compartimento, n_amostras, periodo_coleta, 
+    hg_total_peso_seco, hg_total_agua, forma_hg, 
+    supera_limite_oms_anvisa, tecnica_analitica, 
+    controle_qualidade_mrc, comunidades_municipios_abastecidos, 
+    num_est_populacao_exposta
+) VALUES
+(
+     'HG-2023-001', 
+     1, 
+     2023, 
+    'Campanha OXIOUUWI – 1ª Expedição de Monitoramento da Qualidade das Águas do Rio Negro (UEA/Harvard)', 
+    'https://seas.harvard.edu/news/2024/02/deep-amazon-seas-team-tracks-mercury', 
+    'Manaus → Santa Isabel do Rio Negro (700 km, 50 pontos)', 
+    -3.10, -60.01,
+    'Água superficial / Sedimento / Solo ripário / Peixe', 
+    'Água (total + MeHg); sedimento leito; solos margem; peixes consumidos localmente', 
+    50, 
+    'Set/2023 (estação seca extrema – El Niño)', 
+    NULL, 
+    'Variável por ponto; primeiros dados para IQA Amazônico', 
+    'Hg total + MeHg (especiação)', 
+    'Dados preliminares – limites ainda não publicados', 
+    'CV-AFS / ICP-MS', 
+    'EPA 1631E; MRC NIST 1641d', 
+    'Novo Airão, Barcelos (distrito Moura ~200 fam.), Santa Isabel do Rio Negro, comunidades ao longo do eixo Manaus–SIRN', 
+    '~50.000 (estimativa eixo fluvial)'
+),
+
+(
+    'HG-2024-002', 
+     2, 
+    2024, 
+    '4ª Expedição OXIOUUWI - IQA Rios Amazônicos de Águas Pretas (Rio Negro) e Contaminação por Hg no Madeira', 
+    'https://agenciabrasil.ebc.com.br/radioagencia-nacional/meio-ambiente/audio/2024-11/
+     contaminacao-por-mercurio-de-peixes-do-madeira-e-o-dobro-do-aceitavel', 
+    'Manaus → Santa Isabel do Rio Negro (Negro); Manaus → Humaitá (Madeira)', 
+    -3.10, -60.01, 
+    'Peixe (músculo) + Água superficial', 
+    'Jaraqui (Semaprochilodus spp.) – espécie base alimentar; múltiplas espécies', 
+    200, 
+    'Set/2024', 
+    '~0.95 (jaraqui – quase 2x limite ANVISA)', 
+    NULL, 
+    'Hg total', 
+    'SIM – jaraqui ≈ 2× o limite de 0,5 mg/kg (ANVISA/OMS)', 
+    'CVAAS / CV-AFS', 
+    'Padrões CONAMA; DORM-3', 
+    'Barcelos, Novo Airão, Santa Isabel do Rio Negro, comunidades ribeirinhas e indígenas ao longo do eixo', 
+    '~80.000 (estimativa cidades e comunidades do médio e alto Rio Negro)'
+),
+(
+    'HG-2023-003', 
+    3, 
+    2023, 
+    'Mercury and selenium in muscle tissue of Cichla ssp. and Mylossoma spp. from the middle Rio Negro/AM – metalloproteomic approach', 
+    'https://repositorio.unesp.br/server/api/core/bitstreams/f8467960-479b-49a0-93a4-fe7d61198702/content', 
+    'Médio Rio Negro – AM (próximo a Barcelos/Novo Airão)', 
+    -1.5, -61.0, 
+    'Peixe – músculo', 
+    'Cichla ssp. (tucunaré – carnívoro); Mylossoma spp. (pacu – herbívoro)', 
+    80, 
+    '2022–2023 (protocolo CEUA 326/2023)', 
+    'Tucunaré: >0,5 (predador > pacu); pacu < 0,5', 
+    NULL, 
+    'Hg total + Se (razão molar Hg:Se)', 
+    'SIM (tucunaré predador em indivíduos maiores)', 
+    'GFAAS + ICP-OES', 
+    'MRC DORM-2; IAEA-085', 
+    'Barcelos, Novo Airão – populações que consomem tucunaré e pacu do médio Rio Negro', 
+    '~25.000 (municípios de Barcelos e Novo Airão)'
+),
+
+(
+    'HG-2023-004', 
+     4, 
+     2023, 
+    'Estudo analisa mercúrio em organismos contaminados na Amazônia – resultados parciais (até 2025)', 
+    'https://agenciabrasil.ebc.com.br/radioagencia-nacional/meio-ambiente/audio/2023-11/
+     estudo-analisa-mercurio-em-organismos-contaminados-na-amazonia', 
+    'Bacia Amazônica – inclui Rio Negro (menos impactado diretamente)', 
+    -NULL, NULL, 
+    'Peixe (músculo) – múltiplas espécies', 
+    'Múltiplas espécies comerciais; ênfase em peixes dos centros urbanos da Amazônia', 
+    NULL, 
+    '2021–2023 (resultados finais previstos 2025)', 
+    '~20% das amostras acima do limite OMS/ANVISA', 
+    NULL, 
+    'Hg total', 
+    'SIM – 1 em cada 5 peixes acima do limite recomendado', 
+    'CVAAS / GFAAS', 
+    'Padrões NRC', 
+    'Centros urbanos da Amazônia e comunidades ribeirinhas – inclusive eixo Rio Negro', 
+    'Milhões de consumidores (escala regional)'
+);
+
+CREATE TABLE Medico (
+    id_medico INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    crm VARCHAR(20) NOT NULL UNIQUE,     
+    crm_uf CHAR(2) NOT NULL,             
+    cpf VARCHAR(14) NOT NULL UNIQUE,    
+    especialidade_principal VARCHAR(100),
+    data_nascimento DATE,
+    telefone VARCHAR(20),
+    email VARCHAR(100),
+    data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP   
+);
+
+INSERT INTO Medico (nome, crm, crm_uf, cpf, especialidade_principal, telefone, email)
+VALUES (
+    'Dra. Ana Souza', 
+    '123456', 
+    'AM', 
+    '000.000.000-00', 
+    'Infectologia', 
+    '(92) 99999-0000', 
+    'ana.souza@clinicamedica.com'
+),
+
+(
+    'Dra. Bia Ferraz', 
+    '222222', 
+    'AM', 
+    '111.111.111-00', 
+    'Cardiologia', 
+    '(92) 99999-0000', 
+    'biaferraz@clinicamedica.com'
+),
+
+(
+    'Dra. Sofia Guerra', 
+    '333333', 
+    'AM', 
+    '222.222.222-00', 
+    'Psiquiatria', 
+    '(92) 99999-0000', 
+    'sofiaguerra@clinicamedica.com'
+),
+
+(
+    'Dra. Natalia Lima', 
+    '4444444', 
+    'AM', 
+    '444.444.444-00', 
+    'Infectologia', 
+    '(92) 99999-0000', 
+    'natalia@clinicamedica.com'
+);
+
+CREATE TABLE RegistroMedico (
+    id_registro INT AUTO_INCREMENT PRIMARY KEY,
+    id_medico INT NOT NULL,                  
+    data_atendimento DATETIME DEFAULT CURRENT_TIMESTAMP,
+    tipo_atendimento ENUM('Consulta', 'Retorno', 'Emergencia', 'Telemedicina') DEFAULT 'Consulta',
+    diagnostico_cid VARCHAR(10),                                      
+    prescricao_medicamento TEXT,                         
+    observacoes_exame_fisico TEXT,
+        FOREIGN KEY (id_medico) 
+        REFERENCES Medico(id_medico)
+
+);
+
+INSERT INTO RegistroMedico (id_medico, tipo_atendimento, diagnostico_cid, prescricao_medicamento, observacoes_exame_fisico)
+VALUES (
+    1, 
+    'Consulta', 
+    'R50.9', 
+    'Dipirona',
+    'Paciente apresenta quadro febril há 2 dias, acompanhado de dores musculares.'
+),
+
+(
+    2, 
+    'Retorno', 
+    'R51.9', 
+    'Resfenol',
+    'Paciente apresenta quadro febril há 4 dias, acompanhado de dores musculares.'
+),
+
+(
+    3, 
+    'Emergencia', 
+    'R52.9', 
+    'Morfina',
+    'Paciente apresenta falta de ar, acompanhado de dores musculares.'
+),
+
+(
+    4, 
+    'Telemedicina', 
+    '', 
+    'Pasalix',
+    'Paciente apresenta melhora de quadro.'
+);
+
+SELECT * FROM Usuario;
+
+SELECT * FROM Pesquisadores;
+
+SELECT * FROM Comunidades;
+
+SELECT * FROM RegistrosMercuario;
+
+SELECT * FROM Medico;
+
+SELECT * FROM RegistroMedico;
