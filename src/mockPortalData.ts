@@ -62,7 +62,6 @@ export const demoAccounts: DemoAccount[] = [
     role: 'population',
     name: 'Maria do Carmo',
     identifier: '111.111.111-11',
-    password: 'demo123',
     territory: 'Comunidade Sao Tome - Baixo Rio Negro',
   },
   {
@@ -70,7 +69,6 @@ export const demoAccounts: DemoAccount[] = [
     role: 'doctor',
     name: 'Dra. Helena Nascimento',
     identifier: 'CRM-AM 10234',
-    password: 'medico123',
     territory: 'UBS Fluvial Rio Negro',
   },
   {
@@ -78,7 +76,6 @@ export const demoAccounts: DemoAccount[] = [
     role: 'nurse',
     name: 'Tec. Enf. Carla Mendes',
     identifier: 'ENF-310',
-    password: 'triagem123',
     territory: 'UBS Fluvial Rio Negro',
   },
   {
@@ -86,7 +83,6 @@ export const demoAccounts: DemoAccount[] = [
     role: 'collector',
     name: 'Joao Batista',
     identifier: 'AGT-204',
-    password: 'coleta123',
     territory: 'Equipe de campo - Trecho Manaus / Barcelos',
   },
   {
@@ -94,7 +90,6 @@ export const demoAccounts: DemoAccount[] = [
     role: 'admin',
     name: 'Administrador do Sistema',
     identifier: 'admin',
-    password: 'admin123',
     territory: 'Painel administrativo',
   },
 ]

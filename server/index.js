@@ -27,19 +27,30 @@ const roleLabels = {
 
 const app = express()
 const sessions = new Map()
+const isProduction = process.env.NODE_ENV === 'production' || Boolean(process.env.VERCEL)
 const adminAccessKey = process.env.ADMIN_ACCESS_KEY?.trim() || ''
-const sessionSecret =
-  process.env.SESSION_SECRET?.trim() ||
-  adminAccessKey ||
-  process.env.VERCEL_URL ||
-  'aquasafe-local-session'
+const sessionSecret = process.env.SESSION_SECRET?.trim() || ''
+
+if (isProduction && !sessionSecret) {
+  throw new Error('SESSION_SECRET precisa estar configurado em producao.')
+}
+
+if (isProduction && !adminAccessKey) {
+  throw new Error('ADMIN_ACCESS_KEY precisa estar configurado em producao.')
+}
+
+if (!isProduction && !sessionSecret) {
+  console.warn('SESSION_SECRET ausente; usando segredo temporario apenas para desenvolvimento local.')
+}
+
+const runtimeSessionSecret = sessionSecret || crypto.randomBytes(32).toString('base64url')
 let infrastructureReadyPromise = null
 
 const dbConfig = {
   host: process.env.MYSQLHOST || process.env.DB_HOST || '127.0.0.1',
   port: Number(process.env.MYSQLPORT || process.env.DB_PORT || 3306),
   user: process.env.MYSQLUSER || process.env.DB_USER || 'banco',
-  password: process.env.MYSQLPASSWORD || process.env.DB_PASSWORD || '1234',
+  password: process.env.MYSQLPASSWORD || process.env.DB_PASSWORD || '',
   database: process.env.MYSQLDATABASE || process.env.DB_NAME || 'mercuriorionegro',
 }
 
@@ -50,7 +61,36 @@ const pool = mysql.createPool({
   queueLimit: 0,
 })
 
-app.use(cors())
+function getAllowedCorsOrigins() {
+  const configuredOrigins = process.env.CORS_ORIGIN?.split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean)
+
+  if (configuredOrigins?.length) {
+    return configuredOrigins
+  }
+
+  if (isProduction) {
+    return []
+  }
+
+  return ['http://localhost:5173', 'http://127.0.0.1:5173']
+}
+
+const allowedCorsOrigins = getAllowedCorsOrigins()
+
+app.use(
+  cors({
+    origin(origin, callback) {
+      if (!origin || allowedCorsOrigins.includes(origin)) {
+        callback(null, true)
+        return
+      }
+
+      callback(new Error('Origem nao permitida pelo CORS.'))
+    },
+  }),
+)
 app.use(express.json({ limit: '12mb' }))
 
 app.use('/api', async (_request, response, next) => {
@@ -257,7 +297,7 @@ async function ensureCoreInfrastructure() {
       nome VARCHAR(150) NOT NULL,
       perfil ENUM('population', 'nurse', 'doctor', 'collector', 'admin') NOT NULL,
       identificador_login VARCHAR(120) NOT NULL,
-      senha VARCHAR(120) NOT NULL,
+      senha VARCHAR(255) NOT NULL,
       territorio VARCHAR(180) NULL,
       ativo TINYINT(1) NOT NULL DEFAULT 1,
       criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -267,6 +307,9 @@ async function ensureCoreInfrastructure() {
       KEY idx_usuarios_perfil (perfil)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
   `)
+
+  await ensureColumnExists('usuarios', 'senha', 'VARCHAR(255) NOT NULL')
+  await pool.query('ALTER TABLE usuarios MODIFY senha VARCHAR(255) NOT NULL')
 
   await pool.query(
     "ALTER TABLE usuarios MODIFY perfil ENUM('population', 'nurse', 'doctor', 'collector', 'admin') NOT NULL",
@@ -313,55 +356,78 @@ async function seedCoreData() {
   const [userRows] = await pool.query('SELECT COUNT(*) AS total FROM usuarios')
 
   if ((userRows[0]?.total ?? 0) === 0) {
-    await pool.query(
-      `INSERT INTO usuarios (nome, perfil, identificador_login, senha, territorio, ativo)
-       VALUES
-        (?, ?, ?, ?, ?, 1),
-        (?, ?, ?, ?, ?, 1),
-        (?, ?, ?, ?, ?, 1),
-        (?, ?, ?, ?, ?, 1),
-        (?, ?, ?, ?, ?, 1)`,
+    const seedUsers = [
       [
         'Maria do Carmo',
         'population',
         '111.111.111-11',
-        'demo123',
+        getSeedPassword('SEED_POPULATION_PASSWORD'),
         'Comunidade Sao Tome - Baixo Rio Negro',
+      ],
+      [
         'Dra. Ana Ribeiro',
         'doctor',
         'CRM-AM 10234',
-        'medico123',
+        getSeedPassword('SEED_DOCTOR_PASSWORD'),
         'UBS Fluvial Rio Negro',
+      ],
+      [
         'Tec. Enf. Carla Mendes',
         'nurse',
         'ENF-310',
-        'triagem123',
+        getSeedPassword('SEED_NURSE_PASSWORD'),
         'UBS Fluvial Rio Negro',
+      ],
+      [
         'Joao Batista',
         'collector',
         'AGT-204',
-        'coleta123',
+        getSeedPassword('SEED_COLLECTOR_PASSWORD'),
         'Equipe de campo - Trecho Manaus / Barcelos',
+      ],
+      [
         'Administrador AquaSafe',
         'admin',
         'admin',
-        'admin123',
+        getSeedPassword('SEED_ADMIN_PASSWORD'),
         'Painel administrativo',
       ],
-    )
+    ].filter((user) => user[3])
+
+    if (seedUsers.length > 0) {
+      const placeholders = seedUsers.map(() => '(?, ?, ?, ?, ?, 1)').join(',\n        ')
+      const values = seedUsers.flatMap(([name, role, identifier, password, territory]) => [
+        name,
+        role,
+        identifier,
+        hashPassword(password),
+        territory,
+      ])
+
+      await pool.query(
+        `INSERT INTO usuarios (nome, perfil, identificador_login, senha, territorio, ativo)
+         VALUES
+        ${placeholders}`,
+        values,
+      )
+    }
   }
 
-  await pool.query(
-    `INSERT IGNORE INTO usuarios (nome, perfil, identificador_login, senha, territorio, ativo)
-     VALUES (?, ?, ?, ?, ?, 1)`,
-    [
+  const nurseSeedPassword = getSeedPassword('SEED_NURSE_PASSWORD')
+
+  if (nurseSeedPassword) {
+    await pool.query(
+      `INSERT IGNORE INTO usuarios (nome, perfil, identificador_login, senha, territorio, ativo)
+       VALUES (?, ?, ?, ?, ?, 1)`,
+      [
       'Tec. Enf. Carla Mendes',
       'nurse',
       'ENF-310',
-      'triagem123',
+      hashPassword(nurseSeedPassword),
       'UBS Fluvial Rio Negro',
-    ],
-  )
+      ],
+    )
+  }
 
   const [communityRows] = await pool.query('SELECT COUNT(*) AS total FROM comunidades')
 
@@ -616,8 +682,56 @@ function base64UrlDecode(value) {
   return Buffer.from(value, 'base64url').toString('utf8')
 }
 
+function timingSafeEqualString(left, right) {
+  const leftBuffer = Buffer.from(String(left))
+  const rightBuffer = Buffer.from(String(right))
+
+  if (leftBuffer.length !== rightBuffer.length) {
+    return false
+  }
+
+  return crypto.timingSafeEqual(leftBuffer, rightBuffer)
+}
+
 function signValue(value) {
-  return crypto.createHmac('sha256', sessionSecret).update(value).digest('base64url')
+  return crypto.createHmac('sha256', runtimeSessionSecret).update(value).digest('base64url')
+}
+
+function hashPassword(password) {
+  const salt = crypto.randomBytes(16).toString('base64url')
+  const hash = crypto.scryptSync(String(password), salt, 32).toString('base64url')
+  return `scrypt$${salt}$${hash}`
+}
+
+function getSeedPassword(envName) {
+  const configuredPassword = process.env[envName]?.trim()
+
+  if (configuredPassword) {
+    return configuredPassword
+  }
+
+  if (isProduction) {
+    return null
+  }
+
+  return crypto.randomBytes(18).toString('base64url')
+}
+
+function verifyPassword(password, storedPassword) {
+  const storedValue = String(storedPassword || '')
+
+  if (storedValue.startsWith('scrypt$')) {
+    const [, salt, storedHash] = storedValue.split('$')
+
+    if (!salt || !storedHash) {
+      return false
+    }
+
+    const suppliedHash = crypto.scryptSync(String(password), salt, 32).toString('base64url')
+    return timingSafeEqualString(suppliedHash, storedHash)
+  }
+
+  return timingSafeEqualString(String(password), storedValue)
 }
 
 function createSessionToken(sessionUser) {
@@ -633,7 +747,7 @@ function verifySessionToken(token) {
     return null
   }
 
-  if (signValue(payload) !== signature) {
+  if (!timingSafeEqualString(signValue(payload), signature)) {
     return null
   }
 
@@ -1726,27 +1840,33 @@ app.post('/api/auth/login', async (request, response) => {
       return
     }
 
-    if (!suppliedAdminKey || suppliedAdminKey !== adminAccessKey) {
+    if (!suppliedAdminKey || !timingSafeEqualString(suppliedAdminKey, adminAccessKey)) {
       response.status(403).send('Chave administrativa invalida.')
       return
     }
   }
 
   const [rows] = await pool.query(
-    `SELECT id_usuario, nome, perfil, territorio, ativo
+    `SELECT id_usuario, nome, perfil, territorio, ativo, senha
        FROM usuarios
       WHERE perfil = ?
         AND identificador_login = ?
-        AND senha = ?
       LIMIT 1`,
-    [role, String(identifier).trim(), String(password)],
+    [role, String(identifier).trim()],
   )
 
   const user = rows[0]
 
-  if (!user) {
+  if (!user || !verifyPassword(password, user.senha)) {
     response.status(401).send('Credenciais invalidas para o perfil selecionado.')
     return
+  }
+
+  if (!String(user.senha || '').startsWith('scrypt$')) {
+    await pool.query('UPDATE usuarios SET senha = ? WHERE id_usuario = ?', [
+      hashPassword(password),
+      user.id_usuario,
+    ])
   }
 
   if (user.ativo !== 1) {
@@ -1974,7 +2094,7 @@ app.post('/api/admin/users', authenticate, requireAdmin, async (request, respons
         String(name).trim(),
         String(role).trim(),
         String(identifier).trim(),
-        String(password),
+        hashPassword(password),
         String(territory || '').trim() || null,
       ],
     )

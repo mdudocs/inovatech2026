@@ -52,9 +52,23 @@ Este repositorio ja esta preparado para isso:
 
 ## Variaveis de ambiente
 
-Obrigatoria:
+Obrigatorias em producao:
 
 - `ADMIN_ACCESS_KEY`
+- `SESSION_SECRET`
+
+Opcional, quando a API for acessada por outro dominio:
+
+- `CORS_ORIGIN` com uma ou mais origens separadas por virgula
+- `VITE_MOCK_LOGIN_PASSWORD` apenas para desenvolvimento com `VITE_DATA_SOURCE=mock`
+
+Usuarios iniciais em banco novo, configure somente quando precisar semear acessos:
+
+- `SEED_POPULATION_PASSWORD`
+- `SEED_DOCTOR_PASSWORD`
+- `SEED_NURSE_PASSWORD`
+- `SEED_COLLECTOR_PASSWORD`
+- `SEED_ADMIN_PASSWORD`
 
 Banco local ou externo:
 

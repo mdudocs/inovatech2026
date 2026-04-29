@@ -20,7 +20,6 @@ export type DemoAccount = {
   role: UserRole
   name: string
   identifier: string
-  password: string
   territory: string
 }
 

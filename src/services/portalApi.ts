@@ -105,12 +105,21 @@ async function requestJson<T>(path: string, init?: RequestInit) {
 }
 
 function buildSession(payload: LoginPayload): AuthSession {
+  const mockPassword = import.meta.env.VITE_MOCK_LOGIN_PASSWORD?.trim()
+
+  if (!mockPassword) {
+    throw new Error('Login mock indisponivel sem VITE_MOCK_LOGIN_PASSWORD.')
+  }
+
+  if (payload.password !== mockPassword) {
+    throw new Error('Credenciais invalidas para o perfil selecionado.')
+  }
+
   // As credenciais mock continuam úteis para desenvolvimento sem backend ligado.
   const account = demoAccounts.find(
     (item) =>
       item.role === payload.role &&
-      item.identifier.toLowerCase() === payload.identifier.trim().toLowerCase() &&
-      item.password === payload.password,
+      item.identifier.toLowerCase() === payload.identifier.trim().toLowerCase(),
   )
 
   if (!account) {
