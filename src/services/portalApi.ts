@@ -1,14 +1,5 @@
 // Camada unica de requests do frontend.
 // Centraliza base URL, timeout, erros e contratos de acesso a API.
-import {
-  dashboardMocks,
-  demoAccounts,
-  mockAdminChanges,
-  mockAdminHealth,
-  mockAdminTables,
-  mockAdminUsers,
-  roleMeta,
-} from '../mockPortalData'
 import type {
   AdminDatabaseDashboard,
   AdminOverviewDashboard,
@@ -104,7 +95,34 @@ async function requestJson<T>(path: string, init?: RequestInit) {
   return (await response.json()) as T
 }
 
-function buildSession(payload: LoginPayload): AuthSession {
+function getRequestHeaders(token?: string, extraHeaders?: HeadersInit) {
+  return {
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...(extraHeaders ?? {}),
+  }
+}
+
+export function getPortalConfig() {
+  return {
+    sourceMode: getRequestedSource(),
+    apiBaseUrl: getApiBaseUrl(),
+  }
+}
+
+export async function login(payload: LoginPayload): Promise<AuthSession> {
+  if (import.meta.env.VITE_DATA_SOURCE !== 'mock') {
+    return requestJson<AuthSession>('/auth/login', {
+      method: 'POST',
+      headers:
+        payload.role === 'admin' && payload.accessKey
+          ? { 'x-admin-access-key': payload.accessKey }
+          : undefined,
+      body: JSON.stringify(payload),
+    })
+  }
+
+  await wait(REQUEST_DELAY_MS)
+  const { demoAccounts, roleMeta } = await import('../mockPortalData')
   const mockPassword = import.meta.env.VITE_MOCK_LOGIN_PASSWORD?.trim()
 
   if (!mockPassword) {
@@ -115,7 +133,6 @@ function buildSession(payload: LoginPayload): AuthSession {
     throw new Error('Credenciais invalidas para o perfil selecionado.')
   }
 
-  // As credenciais mock continuam úteis para desenvolvimento sem backend ligado.
   const account = demoAccounts.find(
     (item) =>
       item.role === payload.role &&
@@ -138,100 +155,6 @@ function buildSession(payload: LoginPayload): AuthSession {
   }
 }
 
-function getRequestHeaders(token?: string, extraHeaders?: HeadersInit) {
-  return {
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    ...(extraHeaders ?? {}),
-  }
-}
-
-function buildMockAdminOverview(): AdminOverviewDashboard {
-  return {
-    headline: dashboardMocks.admin.headline,
-    summary: dashboardMocks.admin.summary,
-    stats: dashboardMocks.admin.stats,
-    alerts: dashboardMocks.admin.alerts,
-    activity: dashboardMocks.admin.activity,
-    changes: mockAdminChanges,
-  }
-}
-
-function buildMockAdminUsers(): AdminUsersDashboard {
-  const users = mockAdminUsers
-  const activeCount = users.filter((user) => user.active).length
-  const inactiveCount = users.length - activeCount
-  const profileCount = new Set(users.map((user) => user.role)).size
-
-  return {
-    headline: 'Gestao de usuarios do sistema.',
-    summary: 'Ative, desative e acompanhe os acessos cadastrados no portal.',
-    stats: [
-      {
-        label: 'Usuarios cadastrados',
-        value: String(users.length),
-        detail: 'Total de acessos disponiveis no sistema.',
-        tone: 'teal',
-      },
-      {
-        label: 'Usuarios ativos',
-        value: String(activeCount),
-        detail: 'Acessos liberados para entrar no sistema.',
-        tone: 'gold',
-      },
-      {
-        label: 'Usuarios inativos',
-        value: String(inactiveCount),
-        detail: 'Acessos temporariamente bloqueados.',
-        tone: 'coral',
-      },
-      {
-        label: 'Perfis encontrados',
-        value: String(profileCount),
-        detail: 'Perfis diferentes cadastrados na tabela usuarios.',
-        tone: 'slate',
-      },
-    ],
-    users,
-  }
-}
-
-function buildMockAdminDatabase(): AdminDatabaseDashboard {
-  return {
-    headline: 'Controle do banco e da infraestrutura.',
-    summary: 'Acompanhe o schema, as tabelas lidas pelo painel e o estado da integracao.',
-    stats: dashboardMocks.admin.stats,
-    alerts: dashboardMocks.admin.alerts,
-    tables: mockAdminTables,
-    health: mockAdminHealth,
-    changes: mockAdminChanges,
-  }
-}
-
-export function getPortalConfig() {
-  return {
-    sourceMode: getRequestedSource(),
-    apiBaseUrl: getApiBaseUrl(),
-  }
-}
-
-export async function login(payload: LoginPayload): Promise<AuthSession> {
-  if (getRequestedSource() === 'api') {
-    return requestJson<AuthSession>('/auth/login', {
-      method: 'POST',
-      headers:
-        payload.role === 'admin' && payload.accessKey
-          ? {
-              'x-admin-access-key': payload.accessKey,
-            }
-          : undefined,
-      body: JSON.stringify(payload),
-    })
-  }
-
-  await wait(REQUEST_DELAY_MS)
-  return buildSession(payload)
-}
-
 export type SupportContactPayload = {
   role: UserRole
   name: string
@@ -248,7 +171,7 @@ export type SupportContactResult = {
 export async function submitSupportContact(
   payload: SupportContactPayload,
 ): Promise<SupportContactResult> {
-  if (getRequestedSource() === 'api') {
+  if (import.meta.env.VITE_DATA_SOURCE !== 'mock') {
     return requestJson<SupportContactResult>('/support/contact', {
       method: 'POST',
       body: JSON.stringify(payload),
@@ -285,36 +208,60 @@ export async function fetchDashboard<R extends UserRole>(
   role: R,
   token: string,
 ): Promise<DashboardByRole[R]> {
-  if (getRequestedSource() === 'api') {
+  if (import.meta.env.VITE_DATA_SOURCE !== 'mock') {
     return requestJson<DashboardByRole[R]>(`/dashboard/${role}`, {
       headers: getRequestHeaders(token),
     })
   }
 
   await wait(REQUEST_DELAY_MS)
+  const { dashboardMocks } = await import('../mockPortalData')
   return dashboardMocks[role]
 }
 
 export async function fetchAdminOverview(token: string): Promise<AdminOverviewDashboard> {
-  if (getRequestedSource() === 'api') {
+  if (import.meta.env.VITE_DATA_SOURCE !== 'mock') {
     return requestJson<AdminOverviewDashboard>('/admin/overview', {
       headers: getRequestHeaders(token),
     })
   }
 
   await wait(REQUEST_DELAY_MS)
-  return buildMockAdminOverview()
+  const { dashboardMocks, mockAdminChanges } = await import('../mockPortalData')
+  return {
+    headline: dashboardMocks.admin.headline,
+    summary: dashboardMocks.admin.summary,
+    stats: dashboardMocks.admin.stats,
+    alerts: dashboardMocks.admin.alerts,
+    activity: dashboardMocks.admin.activity,
+    changes: mockAdminChanges,
+  }
 }
 
 export async function fetchAdminUsers(token: string): Promise<AdminUsersDashboard> {
-  if (getRequestedSource() === 'api') {
+  if (import.meta.env.VITE_DATA_SOURCE !== 'mock') {
     return requestJson<AdminUsersDashboard>('/admin/users', {
       headers: getRequestHeaders(token),
     })
   }
 
   await wait(REQUEST_DELAY_MS)
-  return buildMockAdminUsers()
+  const { mockAdminUsers } = await import('../mockPortalData')
+  const activeCount = mockAdminUsers.filter((u) => u.active).length
+  const inactiveCount = mockAdminUsers.length - activeCount
+  const profileCount = new Set(mockAdminUsers.map((u) => u.role)).size
+
+  return {
+    headline: 'Gestao de usuarios do sistema.',
+    summary: 'Ative, desative e acompanhe os acessos cadastrados no portal.',
+    stats: [
+      { label: 'Usuarios cadastrados', value: String(mockAdminUsers.length), detail: 'Total de acessos disponiveis no sistema.', tone: 'teal' },
+      { label: 'Usuarios ativos', value: String(activeCount), detail: 'Acessos liberados para entrar no sistema.', tone: 'gold' },
+      { label: 'Usuarios inativos', value: String(inactiveCount), detail: 'Acessos temporariamente bloqueados.', tone: 'coral' },
+      { label: 'Perfis encontrados', value: String(profileCount), detail: 'Perfis diferentes cadastrados na tabela usuarios.', tone: 'slate' },
+    ],
+    users: mockAdminUsers,
+  }
 }
 
 export async function updateAdminUserStatus(
@@ -322,7 +269,7 @@ export async function updateAdminUserStatus(
   userId: string,
   active: boolean,
 ): Promise<{ id: string; active: boolean; status: string }> {
-  if (getRequestedSource() === 'api') {
+  if (import.meta.env.VITE_DATA_SOURCE !== 'mock') {
     return requestJson<{ id: string; active: boolean; status: string }>(
       `/admin/users/${userId}/status`,
       {
@@ -334,18 +281,14 @@ export async function updateAdminUserStatus(
   }
 
   await wait(REQUEST_DELAY_MS)
-  return {
-    id: userId,
-    active,
-    status: active ? 'Ativo' : 'Inativo',
-  }
+  return { id: userId, active, status: active ? 'Ativo' : 'Inativo' }
 }
 
 export async function createAdminUser(
   token: string,
   payload: CreateAdminUserPayload,
 ): Promise<{ id: string }> {
-  if (getRequestedSource() === 'api') {
+  if (import.meta.env.VITE_DATA_SOURCE !== 'mock') {
     return requestJson<{ id: string }>('/admin/users', {
       method: 'POST',
       headers: getRequestHeaders(token),
@@ -354,7 +297,7 @@ export async function createAdminUser(
   }
 
   await wait(REQUEST_DELAY_MS)
-
+  const { mockAdminUsers } = await import('../mockPortalData')
   const nextId = `mock-user-${Date.now()}`
   mockAdminUsers.unshift({
     id: nextId,
@@ -370,14 +313,23 @@ export async function createAdminUser(
 }
 
 export async function fetchAdminDatabase(token: string): Promise<AdminDatabaseDashboard> {
-  if (getRequestedSource() === 'api') {
+  if (import.meta.env.VITE_DATA_SOURCE !== 'mock') {
     return requestJson<AdminDatabaseDashboard>('/admin/database', {
       headers: getRequestHeaders(token),
     })
   }
 
   await wait(REQUEST_DELAY_MS)
-  return buildMockAdminDatabase()
+  const { dashboardMocks, mockAdminTables, mockAdminHealth, mockAdminChanges } = await import('../mockPortalData')
+  return {
+    headline: 'Controle do banco e da infraestrutura.',
+    summary: 'Acompanhe o schema, as tabelas lidas pelo painel e o estado da integracao.',
+    stats: dashboardMocks.admin.stats,
+    alerts: dashboardMocks.admin.alerts,
+    tables: mockAdminTables,
+    health: mockAdminHealth,
+    changes: mockAdminChanges,
+  }
 }
 
 export async function submitDoctorCaseAction(
@@ -385,7 +337,7 @@ export async function submitDoctorCaseAction(
   caseId: string,
   payload: DoctorCaseActionPayload,
 ): Promise<DoctorCaseActionResult> {
-  if (getRequestedSource() === 'api') {
+  if (import.meta.env.VITE_DATA_SOURCE !== 'mock') {
     return requestJson<DoctorCaseActionResult>(`/doctor/cases/${caseId}/actions`, {
       method: 'POST',
       headers: getRequestHeaders(token),
@@ -394,25 +346,14 @@ export async function submitDoctorCaseAction(
   }
 
   await wait(REQUEST_DELAY_MS)
+  const { dashboardMocks } = await import('../mockPortalData')
 
   const actionMeta =
     payload.action === 'request_biomarker'
-      ? {
-          lastAction: 'Biomarcador solicitado',
-          status: 'Aguardando biomarcador',
-          nextStep: 'Coletar biomarcador e revisar resultado.',
-        }
+      ? { lastAction: 'Biomarcador solicitado', status: 'Aguardando biomarcador', nextStep: 'Coletar biomarcador e revisar resultado.' }
       : payload.action === 'schedule_return'
-        ? {
-            lastAction: 'Retorno marcado',
-            status: 'Retorno agendado',
-            nextStep: 'Reavaliar sintomas e consumo de peixe.',
-          }
-        : {
-            lastAction: 'Conduta registrada',
-            status: 'Conduta registrada',
-            nextStep: 'Acompanhar evolucao no proximo contato.',
-          }
+        ? { lastAction: 'Retorno marcado', status: 'Retorno agendado', nextStep: 'Reavaliar sintomas e consumo de peixe.' }
+        : { lastAction: 'Conduta registrada', status: 'Conduta registrada', nextStep: 'Acompanhar evolucao no proximo contato.' }
 
   const currentCase =
     dashboardMocks.doctor.cases.find((item) => item.id === caseId) ??
@@ -439,7 +380,7 @@ export async function submitTriageCaseAction(
   caseId: string,
   payload: TriageCaseActionPayload,
 ): Promise<TriageCaseActionResult> {
-  if (getRequestedSource() === 'api') {
+  if (import.meta.env.VITE_DATA_SOURCE !== 'mock') {
     return requestJson<TriageCaseActionResult>(`/nurse/cases/${caseId}/triage`, {
       method: 'POST',
       headers: getRequestHeaders(token),
@@ -448,6 +389,7 @@ export async function submitTriageCaseAction(
   }
 
   await wait(REQUEST_DELAY_MS)
+  const { dashboardMocks } = await import('../mockPortalData')
 
   const currentCase =
     dashboardMocks.doctor.cases.find((item) => item.id === caseId) ??
@@ -501,7 +443,7 @@ export async function createTriageCase(
   token: string,
   payload: CreateTriageCasePayload,
 ): Promise<TriageCaseActionResult> {
-  if (getRequestedSource() === 'api') {
+  if (import.meta.env.VITE_DATA_SOURCE !== 'mock') {
     return requestJson<TriageCaseActionResult>('/nurse/cases', {
       method: 'POST',
       headers: getRequestHeaders(token),
@@ -572,7 +514,7 @@ export async function fetchLiveCollections(
 ): Promise<LiveCollectionRecord[]> {
   // O mapa e as telas de apoio usam esta função para combinar pesquisa,
   // filtros e leitura oficial da API.
-  if (getRequestedSource() === 'api' && token) {
+  if (import.meta.env.VITE_DATA_SOURCE !== 'mock' && token) {
     return requestJson<LiveCollectionRecord[]>(buildCollectionSearchPath(params), {
       headers: getRequestHeaders(token),
     })
@@ -619,7 +561,7 @@ export async function fetchLiveCollectionDetail(
   token: string,
   collectionId: string,
 ): Promise<LiveCollectionRecord> {
-  if (getRequestedSource() === 'api') {
+  if (import.meta.env.VITE_DATA_SOURCE !== 'mock') {
     return requestJson<LiveCollectionRecord>(
       `/collections/live/${encodeURIComponent(collectionId)}`,
       {
@@ -644,7 +586,7 @@ export async function submitLiveCollection(
   payload: LiveCollectionRecord,
 ): Promise<LiveCollectionRecord> {
   // A API devolve a versão persistida da coleta, normalmente já com número oficial.
-  if (getRequestedSource() === 'api') {
+  if (import.meta.env.VITE_DATA_SOURCE !== 'mock') {
     return requestJson<LiveCollectionRecord>('/collections/live', {
       method: 'POST',
       headers: getRequestHeaders(token),

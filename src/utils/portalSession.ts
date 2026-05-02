@@ -24,7 +24,18 @@ export function readStoredSession() {
   }
 
   try {
-    return JSON.parse(raw) as AuthSession
+    const session = JSON.parse(raw) as AuthSession
+
+    // Em modo API (producao), rejeita qualquer token que nao seja assinado pelo servidor.
+    // Tokens reais sempre comecam com "asf.". Isso bloqueia sessoes falsas injetadas via localStorage.
+    if (import.meta.env.VITE_DATA_SOURCE !== 'mock') {
+      if (typeof session?.token !== 'string' || !session.token.startsWith('asf.')) {
+        window.localStorage.removeItem(SESSION_STORAGE_KEY)
+        return null
+      }
+    }
+
+    return session
   } catch {
     window.localStorage.removeItem(SESSION_STORAGE_KEY)
     return null
